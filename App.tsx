@@ -19,7 +19,7 @@ export default function App() {
   return (
     <GluestackUIProvider config={config} >
 
-      <Center flex={1} bg='$white'>
+      <Center flex={1}>
         {fontsLoaded ? <SignIn /> : <Loading />}
         <StatusBar style="auto" />
       </Center>
