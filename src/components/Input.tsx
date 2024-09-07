@@ -7,7 +7,7 @@ export const Input = ({...rest }: Props) => {
     return(
         <GluestackInput 
             bg="$gray700" 
-            h="$14"
+            h="$12"
             px="$4"
             borderWidth="$0"
             borderRadius="$md"

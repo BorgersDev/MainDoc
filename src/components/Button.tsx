@@ -8,14 +8,14 @@ type Props = ComponentProps<typeof GluestackButton> & {
     isLoading?: boolean;
 } 
 
-export const Button = ({title, variant = "clear" , isLoading = false, ...rest}: Props) => {
+export const Button = ({title, variant = "dark" , isLoading = false, ...rest}: Props) => {
     return (
         <GluestackButton 
             w="$full"
-            h="$14"
+            h="$12"
             bg={ variant === "dark" ? "$blue900" : "$gray500" }
             borderWidth="$0"
-            rounded="$sm"
+            rounded="$md"
             $active-bg={ variant === "dark" ? "$blue800" : "$warmGray200" }
             disabled={isLoading}
             {...rest}
