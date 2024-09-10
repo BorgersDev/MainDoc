@@ -1,13 +1,23 @@
+import { Center, Heading, HStack, ScrollView, Text, VStack } from "@gluestack-ui/themed"
+
+
 import { Button } from "@components/Button"
 import { Input } from "@components/Input"
 import { Logo } from "@components/Logo"
-import { Center, Heading, HStack, ScrollView, Text, VStack } from "@gluestack-ui/themed"
+import { useNavigation } from "@react-navigation/native"
+import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 
 
 
 
 
 export const SignIn = () => {
+
+    const navigator = useNavigation<AuthNavigationRoutesProps>();
+
+    const handleNewAccount = () => {
+        navigator.navigate("signUp")
+    }
     return (
         <ScrollView 
             w="$full"
@@ -38,7 +48,7 @@ export const SignIn = () => {
                 <Center h="$56" flex={1} px="$12">
                     <Heading fontSize="$sm" fontFamily="$heading" >Ainda não tem acesso? </Heading>
 
-                    <Button title="Crie uma conta" variant="clear" />
+                    <Button title="Crie uma conta" variant="clear" onPress={handleNewAccount} />
                 </Center>
             </VStack>
         </ScrollView>
