@@ -49,7 +49,7 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } f
           >
             <Animated.View style={animatedIconStyle} >
               {icon[routeName]({
-                  color: isFocused ? '#673ab7' : '#222' ,
+                  color: isFocused ? '#fff' : '#222' ,
               })}
             </Animated.View>
             <Animated.Text style={[{ color: isFocused ? '#673ab7' : '#222', fontSize: 12 }, animatedTextStyle]}>
