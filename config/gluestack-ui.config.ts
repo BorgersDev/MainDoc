@@ -520,6 +520,7 @@ export const gluestackUIConfig = createConfig({
       '2xl': 1.6,
     },
     lineHeights: {
+      '3xs': 14,
       '2xs': 16,
       'xs': 18,
       'sm': 20,
@@ -551,6 +552,7 @@ export const gluestackUIConfig = createConfig({
       mono: undefined,
     },
     fontSizes: {
+      '3xs': 8,
       '2xs': 10,
       'xs': 12,
       'sm': 14,

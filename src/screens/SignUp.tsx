@@ -25,7 +25,7 @@ export const SignUp = () => {
             bounces={false}
             $active-alignItems="center"
         >
-
+∏
             <VStack w="$full" flex={1} bg="$gray700"  >
                 <VStack w="$full" flex={1} px="$12"  bg="$gray600" rounded="$3xl">
 

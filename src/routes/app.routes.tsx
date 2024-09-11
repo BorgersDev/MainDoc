@@ -5,9 +5,9 @@ import { Arquivos } from "@screens/Arquivos";
 import { TabBar } from "@components/TabBar";
 
 type AppRoutes = {
-    home: undefined;
-    arquivos: undefined;
-    usuario: undefined;
+    Home: undefined;
+    Arquivos: undefined;
+    Usuário: undefined;
 }
  
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -19,9 +19,9 @@ export const AppRoutes = ( ) => {
         <Navigator tabBar={props => <TabBar {...props} />} screenOptions={{
             headerShown: false
         }}>
-        <Screen name="home" component={Home} />
-        <Screen name="arquivos" component={Arquivos} />
-        <Screen name="usuario" component={Usuario} />
+        <Screen name="Home" component={Home} />
+        <Screen name="Arquivos" component={Arquivos} />
+        <Screen name="Usuário" component={Usuario} />
     </Navigator>
     )
 }

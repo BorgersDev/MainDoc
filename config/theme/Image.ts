@@ -13,6 +13,11 @@ export const Image = createStyle({
   },
   variants: {
     size: {
+      '3xs': {
+        w: '$5',
+        h: '$5',
+      },
+      
       '2xs': {
         w: '$6',
         h: '$6',
