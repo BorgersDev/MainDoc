@@ -52,7 +52,7 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } f
                   color: isFocused ? '#fff' : '#222' ,
               })}
             </Animated.View>
-            <Animated.Text style={[{ color: isFocused ? '#673ab7' : '#222', fontSize: 12 }, animatedTextStyle]}>
+            <Animated.Text style={[{ color: isFocused ? '#00419d' : '#222', fontSize: 12 }, animatedTextStyle]}>
               {label}
             </Animated.Text>
         </Pressable>
