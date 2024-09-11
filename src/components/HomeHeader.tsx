@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTitleText,
   AccordionTrigger,
+  Center,
   ChevronDownIcon,
   ChevronUpIcon,
   Heading,
@@ -36,18 +37,12 @@ export const HomeHeader = () => {
         borderRadius="$2xl"
         sx={{
           borderBottomColor: "$gray600",
-          _dark: {
-            borderBottomColor: "$gray600",
-          },
         }}
       >
         <AccordionHeader
-            borderRadius="$lg"
+          borderRadius="$lg"
           sx={{
             backgroundColor: "$gray600",
-            _dark: {
-              backgroundColor: "$gray600",
-            },
           }}
         >
           <AccordionTrigger>
@@ -76,28 +71,30 @@ export const HomeHeader = () => {
             },
           }}
         >
-            <HStack justifyContent="space-between" alignItems="center">
-                <VStack>
-                    <AccordionContentText fontFamily="$body" >
-                        Nome: <Text fontFamily="$heading" >Rodrigo Wind</Text>
-                    </AccordionContentText>
-                    <AccordionContentText fontFamily="$body" >
-                        Empresa: <Text fontFamily="$heading" >Otimize-Ti</Text>
-                    </AccordionContentText>
-                </VStack>
-                <Pressable>
-                    <VStack gap="$2" px="$4" alignItems="center" bg="$gray600" borderRadius="$lg" py="$2" >
-                        <Text fontFamily="$heading" >Trocar empresa ?</Text>
-                        <Feather name="refresh-cw" size={20} />
-                    </VStack>
-                    
-                </Pressable>
-                
-            </HStack>
-          
+          <HStack justifyContent="space-between" alignItems="center">
+            <VStack>
+              <AccordionContentText fontFamily="$body">
+                Nome: <Text fontFamily="$heading">Rodrigo Wind</Text>
+              </AccordionContentText>
+              <AccordionContentText fontFamily="$body">
+                Empresa: <Text fontFamily="$heading">Otimize-Ti</Text>
+              </AccordionContentText>
+            </VStack>
+            <Pressable>
+              <VStack
+                gap="$2"
+                px="$4"
+                alignItems="center"
+                borderRadius="$lg"
+                py="$2"
+              >
+                <Text fontFamily="$heading">Trocar empresa ?</Text>
+                <Feather name="refresh-cw" size={20} />
+              </VStack>
+            </Pressable>
+          </HStack>
         </AccordionContent>
       </AccordionItem>
-      
     </Accordion>
   );
 };
