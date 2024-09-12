@@ -1,16 +1,12 @@
-import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent  } from 'react-native';
+import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import  TabBarButton  from './TabBarButton';
+import TabBarButton from './TabBarButton';
 import { useState } from 'react';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, interpolateColor } from 'react-native-reanimated';
 
 export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
-    
-  const [dimensions, setDimensions] = useState({height: 20, width: 100})
-
-  const buttonWidth = dimensions.width / state.routes.length;
-
+  const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
+  const buttonWidth = dimensions.width / 3;
   const onTabbarLayout = (e: LayoutChangeEvent) => {
     setDimensions({
       height: e.nativeEvent.layout.height,
@@ -19,39 +15,44 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
   };
 
   const tabPositionX = useSharedValue(0);
+  const backgroundColor = useSharedValue(0); // 0 for tab screen color, 1 for other screens
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{
-        translateX: tabPositionX.value
-      }]
-    }
-  })
-    
+      transform: [{ translateX: tabPositionX.value }],
+      backgroundColor: interpolateColor(
+        backgroundColor.value,
+        [0, 1],
+        ['#00419d', '#F7F7F8']
+      ),
+    };
+  });
+
+  const updateTabPosition = (index: number, isTabScreen: boolean) => {
+    tabPositionX.value = withSpring(buttonWidth * index, { duration: 1500 });
+    backgroundColor.value = isTabScreen ? 0 : 1;
+  };
+
   return (
     <View onLayout={onTabbarLayout} style={styles.tabbar}>
-      <Animated.View style={[animatedStyle,{
-        position: 'absolute',
-        backgroundColor: '#00419d',
-        borderRadius: 30,
-        marginHorizontal: 12,
-        height: dimensions.height -15,
-        width: buttonWidth -25,
-      }]}
+      <Animated.View
+        style={[animatedStyle, {
+          position: 'absolute',
+          borderRadius: 30,
+          marginHorizontal: 12,
+          height: dimensions.height - 15,
+          width: buttonWidth - 25,
+        }]}
       />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-
+        const label = options.tabBarLabel !== undefined ? options.tabBarLabel : route.name;
         const isFocused = state.index === index;
 
         const onPress = () => {
-          tabPositionX.value = withSpring(buttonWidth * index, {duration: 1500})
+          const isTabScreen = ['Home', 'Arquivos', 'Usuário'].includes(route.name);
+          updateTabPosition(index, isTabScreen);
+
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -59,47 +60,41 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+            navigation.navigate(route.name);
           }
         };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-
-        return (
-          <TabBarButton 
-            key={route.name}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            isFocused={isFocused}
-            routeName={route.name}
-            color={isFocused ? '#fff' : '#222'}
-            label={label}
-          />
-        );
+        if (['Home', 'Arquivos', 'Usuário'].includes(route.name)) {
+          return (
+            <TabBarButton
+              key={route.name}
+              onPress={onPress}
+              isFocused={isFocused}
+              routeName={route.name}
+              label={label}
+            />
+          );
+        }
+        return null;
       })}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-    tabbar: {
-        position: 'absolute',
-        bottom: 50,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: "#F7F7F8",
-        marginHorizontal: 55,
-        paddingVertical: 15,
-        borderRadius: 35,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 10},
-        shadowRadius: 10,
-        shadowOpacity: 0.1
-    },
-})
+  tabbar: {
+    position: 'absolute',
+    bottom: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F7F7F8',
+    marginHorizontal: 55,
+    paddingVertical: 15,
+    borderRadius: 35,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    shadowOpacity: 0.1,
+  },
+});

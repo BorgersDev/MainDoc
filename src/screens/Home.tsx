@@ -20,11 +20,17 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { Pressable } from "react-native";
 
 export const Home = () => {
-  const handlePiroca = () => {
-    console.log("ola")
+
+  const navigator = useNavigation<AppNavigationRoutesProps>();
+
+
+  const handleNavigation = (screen: string) => {
+    navigator.navigate(screen);
   }
   return (
     <VStack flex={1} bg="$gray600">
@@ -72,10 +78,10 @@ export const Home = () => {
               </AccordionTrigger>
               <VStack>
                 <HStack justifyContent="flex-start" pl="$4.5" gap="$6" w="$full" alignItems="center">
-                  <ScreenIcon onPress={handlePiroca} />
-                  <ScreenIcon />
-                  <ScreenIcon />
-                  <ScreenIcon />
+                  <ScreenIcon onPress={handleNavigation} screen="Departamento"/>
+                  <ScreenIcon onPress={handleNavigation} screen="Empresa"/>
+                  <ScreenIcon onPress={handleNavigation} screen="TipoDeDocumento" realName="Tipo Documento" />
+                  <ScreenIcon onPress={handleNavigation} screen="Licenca" realName="Licença" />
                 </HStack>
               </VStack>
             </AccordionHeader>
@@ -84,16 +90,17 @@ export const Home = () => {
               <VStack>
                 <Heading mb="$1" py="$2" size="sm">Gestão de Arquivos</Heading>
                 <HStack justifyContent="flex-start" gap="$6" w="$full" alignItems="center">
-                  <ScreenIcon />
-                  <ScreenIcon />
+                <ScreenIcon onPress={handleNavigation} screen="Arquivos"/>
+                <ScreenIcon onPress={handleNavigation} screen="Lixeira"/>
                 </HStack>
               </VStack>
 
               <VStack>
                 <Heading mb="$1" py="$2" size="sm">Segurança</Heading>
                 <HStack justifyContent="flex-start" gap="$6" w="$full" alignItems="center">
-                  <ScreenIcon />
-                  <ScreenIcon />
+                <ScreenIcon onPress={handleNavigation} screen="PerfilDeUsuario" realName="Perfil usuário" />
+                <ScreenIcon onPress={handleNavigation} screen="Usuário" realName="Usuário" />
+
                 </HStack>
               </VStack>
             </AccordionContent>
