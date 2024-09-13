@@ -1,12 +1,14 @@
 import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, interpolateColor } from 'react-native-reanimated';
+import { useNavigationStateContext } from '@contexts/NavigationContext';
 
 export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
   const buttonWidth = dimensions.width / 3;
+  
   const onTabbarLayout = (e: LayoutChangeEvent) => {
     setDimensions({
       height: e.nativeEvent.layout.height,
@@ -16,6 +18,7 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
 
   const tabPositionX = useSharedValue(0);
   const backgroundColor = useSharedValue(0); // 0 for tab screen color, 1 for other screens
+  const { isTabScreen, setIsTabScreen } = useNavigationStateContext();
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -30,8 +33,22 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
 
   const updateTabPosition = (index: number, isTabScreen: boolean) => {
     tabPositionX.value = withSpring(buttonWidth * index, { duration: 1500 });
-    backgroundColor.value = isTabScreen ? 0 : 1;
+    backgroundColor.value = withSpring(isTabScreen ? 0 : 1);
+    setIsTabScreen(isTabScreen);
   };
+
+  useEffect(() => {
+    const currentRoute = state.routes[state.index].name;
+    const isTabScreenRoute = ['Home', 'Arquivos', 'Usuário'].includes(currentRoute);
+
+    const currentTabIndex = ['Home', 'Arquivos', 'Usuário'].indexOf(currentRoute);
+    
+    if (isTabScreenRoute) {
+      updateTabPosition(currentTabIndex, true); // Update tab position and background for tabbed screens
+    } else {
+      backgroundColor.value = withSpring(1); // Change background color for non-tab screens
+    }
+  }, [state.index]);
 
   return (
     <View onLayout={onTabbarLayout} style={styles.tabbar}>
