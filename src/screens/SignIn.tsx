@@ -37,7 +37,7 @@ export const SignIn = () => {
                     <Center  gap="$2">
                         <Heading fontSize="$md" > Acesse sua conta </Heading>
 
-                        <Input placeholder="Username" autoCorrect={false} keyboardType="number-pad" />
+                        <Input placeholder="Username" autoCorrect={false} />
                         <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry />
 
                         <Button title="Entrar" my="$14" />

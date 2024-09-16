@@ -24,7 +24,8 @@ export const HomeHeader = () => {
     <Accordion
       width="$full"
       type="multiple"
-      my="$14"
+      mt="10%"
+      mb="7%"
       borderWidth={0}
       shadowColor="transparent"
       borderColor="$borderLight300"
