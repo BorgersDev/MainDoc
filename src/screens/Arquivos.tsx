@@ -1,6 +1,7 @@
-import { Box, Card, Center, HStack, Input, Text, VStack } from "@gluestack-ui/themed";
+import { Box, Button, Card, Center, Heading, HStack, Image, Input, Text, VStack } from "@gluestack-ui/themed";
 import { Feather } from "@expo/vector-icons";
 import { Pressable } from "react-native";
+import { DocumentCard } from "@components/DocumentCard";
 
 
 
@@ -9,11 +10,11 @@ import { Pressable } from "react-native";
 export const Arquivos = ( ) => {
     return (
         <VStack flex={1}  bg="$gray600" >
-            <VStack pt="$14" mb="$10" pb="$5" bg="$gray700" borderRadius="$2xl"
-                    shadowColor="$gray300"
-                    shadowOffset={{ width: 0, height: 3 }}
-                    shadowRadius={6}
-                    shadowOpacity={0.2} 
+            <VStack pt="$14" mb="$10" pb="$5" bg="$gray600" borderRadius="$2xl"
+                    // shadowColor="$gray300"
+                    // shadowOffset={{ width: 0, height: 3 }}
+                    // shadowRadius={6}
+                    // shadowOpacity={0.2} 
             >
 
                 <Input  bg="$gray600" justifyContent="space-between" alignItems="center" mx="5%" px="$2" borderRadius="$lg"  >
@@ -29,9 +30,9 @@ export const Arquivos = ( ) => {
 
                     </HStack>
                 </Input>
-            </VStack>
+            </VStack> 
             <VStack flex={1} mx="5%">
-                <Card />
+               <DocumentCard name="SEI Atualizações Melhorias - 8.0.3.2.pdf" />
             </VStack>
         </VStack>
     )

@@ -1,5 +1,4 @@
 import { Box, Center, Text } from "@gluestack-ui/themed";
-import { Feather } from "@expo/vector-icons";
 import { Pressable, GestureResponderEvent } from "react-native";
 import { ComponentProps } from "react";
 import { icon } from "../../constants/icon";
