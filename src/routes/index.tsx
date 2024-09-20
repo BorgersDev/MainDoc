@@ -11,7 +11,7 @@ export const Routes = () => {
     return (
         <Box flex={1} bg="$gray100" >  
         <NavigationContainer theme={theme} > 
-            <AppRoutes />
+            <AuthRoutes />
         </NavigationContainer>
         </Box>
     )

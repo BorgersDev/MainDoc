@@ -10,7 +10,7 @@ import { DocumentCard } from "@components/DocumentCard";
 export const Arquivos = ( ) => {
     return (
         <VStack flex={1}  bg="$gray600" >
-            <VStack pt="$14" mb="$10" pb="$5" bg="$gray600" borderRadius="$2xl"
+            <VStack pt="$15" mb="$10" pb="$5" bg="$gray600" borderRadius="$2xl"
                     // shadowColor="$gray300"
                     // shadowOffset={{ width: 0, height: 3 }}
                     // shadowRadius={6}
@@ -31,8 +31,12 @@ export const Arquivos = ( ) => {
                     </HStack>
                 </Input>
             </VStack> 
-            <VStack flex={1} mx="5%">
+            <VStack flex={1} mx="5%" gap="$4">
                <DocumentCard name="SEI Atualizações Melhorias - 8.0.3.2.pdf" />
+               <DocumentCard name="SEI Atualizações Melhorias - 8.0.3.2.pdf" />
+               <DocumentCard name="SEI Atualizações Melhorias - 8.0.3.2.pdf" />
+               <DocumentCard name="SEI Atualizações Melhorias - 8.0.3.2.pdf" />
+
             </VStack>
         </VStack>
     )
