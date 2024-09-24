@@ -8,15 +8,23 @@ import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
 
+type FormDataProps = {
+    username: string;
+    password: string;
+}
 
 
 
 
 export const SignIn = () => {
 
-    const { control } = useForm();
+    const { control, handleSubmit } = useForm<FormDataProps>();
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
+
+    const handleSignIn = (data: FormDataProps) => {
+        console.log(data)
+    }
 
     const handleNewAccount = () => {
         navigator.navigate("signUp")
@@ -43,20 +51,20 @@ export const SignIn = () => {
                         <Controller 
                             control={control}
                             name="username"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} />
                             )}                        
                         />
                         <Controller 
                             control={control}
                             name="password"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} />
                             )}                        
                         />
 
 
-                        <Button title="Entrar" my="$14" />
+                        <Button title="Entrar" my="$14" onPress={handleSubmit(handleSignIn)} />
                     </Center>
 
                 </VStack>

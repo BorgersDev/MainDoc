@@ -7,17 +7,28 @@ import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
 
 
+type FormDataProps = {
+    cpf: string;
+    username: string;
+    email: string;
+    password: string;
+    password_confirm: string;
+}
 
 
 
 export const SignUp = () => {
 
-    const { control } = useForm();
+    const { control, handleSubmit } = useForm<FormDataProps>();
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
     const handleGoBack = () => {
         navigator.goBack()
+    }
+
+    const handleSignUp = (data: FormDataProps) => {
+        console.log(data)
     }
 
     return (
@@ -42,43 +53,43 @@ export const SignUp = () => {
                         <Controller 
                             control={control}
                             name="cpf"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} value={value} />
                             )}                        
                         />
 
                         <Controller 
                             control={control}
                             name="username"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} />
                             )}                        
                         />
                         <Controller 
                             control={control}
                             name="email"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} value={value} />
                             )}                        
                         />
                         <Controller 
                             control={control}
                             name="password"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} />
                             )}                        
                         />
                         <Controller 
                             control={control}
                             name="password_confirm"
-                            render={({field: { onChange }}) => (
-                                <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} onSubmitEditing={handleSubmit(handleSignUp)} value={value} />
                             )}                        
                         />
                         
 
 
-                        <Button title="Criar e acessar" my="$12" />
+                        <Button title="Criar e acessar" my="$12" onPress={handleSubmit(handleSignUp)} />
                     </Center>
 
                 </VStack>
