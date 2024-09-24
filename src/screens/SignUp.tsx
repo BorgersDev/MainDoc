@@ -4,12 +4,16 @@ import { Logo } from "@components/Logo"
 import { Center, Heading, HStack, Text, ScrollView, VStack } from "@gluestack-ui/themed"
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
+import { useForm, Controller } from "react-hook-form"
 
 
 
 
 
 export const SignUp = () => {
+
+    const { control } = useForm();
+
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
     const handleGoBack = () => {
@@ -35,13 +39,43 @@ export const SignUp = () => {
                     <Center  my="-$14" gap="$2">
                         <Heading fontSize="$md" > Crie sua conta </Heading>
 
-                        {/* <Input placeholder="CNPJ" autoCorrect={false} keyboardType="number-pad" />
-                        <Input placeholder="Razão Social" autoCorrect={false}  /> */}
-                        <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" />
-                        <Input placeholder="Username" autoCorrect={false}  />
-                        <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" />
-                        <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry />
-                        <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry />
+                        <Controller 
+                            control={control}
+                            name="cpf"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} />
+                            )}                        
+                        />
+
+                        <Controller 
+                            control={control}
+                            name="username"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} />
+                            )}                        
+                        />
+                        <Controller 
+                            control={control}
+                            name="email"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} />
+                            )}                        
+                        />
+                        <Controller 
+                            control={control}
+                            name="password"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            )}                        
+                        />
+                        <Controller 
+                            control={control}
+                            name="password_confirm"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            )}                        
+                        />
+                        
 
 
                         <Button title="Criar e acessar" my="$12" />

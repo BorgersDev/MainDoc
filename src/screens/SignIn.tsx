@@ -6,12 +6,15 @@ import { Input } from "@components/Input"
 import { Logo } from "@components/Logo"
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
+import { useForm, Controller } from "react-hook-form"
 
 
 
 
 
 export const SignIn = () => {
+
+    const { control } = useForm();
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
@@ -37,8 +40,21 @@ export const SignIn = () => {
                     <Center  gap="$2">
                         <Heading fontSize="$md" > Acesse sua conta </Heading>
 
-                        <Input placeholder="Username" autoCorrect={false} />
-                        <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry />
+                        <Controller 
+                            control={control}
+                            name="username"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} />
+                            )}                        
+                        />
+                        <Controller 
+                            control={control}
+                            name="password"
+                            render={({field: { onChange }}) => (
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} />
+                            )}                        
+                        />
+
 
                         <Button title="Entrar" my="$14" />
                     </Center>
