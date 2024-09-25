@@ -19,7 +19,7 @@ type FormDataProps = {
 
 export const SignUp = () => {
 
-    const { control, handleSubmit } = useForm<FormDataProps>();
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>();
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
@@ -53,41 +53,53 @@ export const SignUp = () => {
                         <Controller 
                             control={control}
                             name="cpf"
+                            rules={{
+                                required: "Informe o CPF"
+                            }}
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} value={value} />
+                                <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} value={value} errorMessage={errors.cpf?.message} />
                             )}                        
                         />
 
                         <Controller 
                             control={control}
                             name="username"
+                            rules={{
+                                required: "Informe o Username"
+                            }}
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} />
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
                             )}                        
                         />
+
                         <Controller 
                             control={control}
                             name="email"
+                            rules={{
+                                required: "Informe o E-mail"
+                            }}
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} value={value} />
-                            )}                        
-                        />
-                        <Controller 
-                            control={control}
-                            name="password"
-                            render={({field: { onChange, value }}) => (
-                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} />
-                            )}                        
-                        />
-                        <Controller 
-                            control={control}
-                            name="password_confirm"
-                            render={({field: { onChange, value }}) => (
-                                <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} onSubmitEditing={handleSubmit(handleSignUp)} value={value} />
+                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} value={value} errorMessage={errors.email?.message} />
                             )}                        
                         />
                         
-
+                        <Controller 
+                            control={control}
+                            name="password"
+                            rules={{required: "Informe a senha"}}
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} errorMessage={errors.password?.message} />
+                            )}                        
+                        />
+                        
+                        <Controller 
+                            control={control}
+                            name="password_confirm"
+                            rules={{required: "Confirme a senha"}}
+                            render={({field: { onChange, value }}) => (
+                                <Input placeholder="Confirmar senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} onSubmitEditing={handleSubmit(handleSignUp)} value={value} errorMessage={errors.password_confirm?.message} />
+                            )}                        
+                        />
 
                         <Button title="Criar e acessar" my="$12" onPress={handleSubmit(handleSignUp)} />
                     </Center>
