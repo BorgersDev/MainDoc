@@ -16,13 +16,16 @@ export const Input = ({isReadOnly = false,isInvalid = false , errorMessage = nul
                     bg="$gray700" 
                     h="$12"
                     px="$4"
-                    borderWidth={invalid ? "$1" : "$0"}
-                    borderColor={invalid && "$error400" }
+                    borderWidth="$0"
                     borderRadius="$md"
                     isReadOnly={isReadOnly}
                     $focus={{
                         borderWidth: 1,
                         borderColor: "$blue300"
+                    }}
+                    $invalid={{
+                        borderWidth: 1,
+                        borderColor: "$error400"
                     }}
                 >
                     <InputField {...rest} fontSize="$md" color="$gray100" placeholderTextColor="$gray400" />

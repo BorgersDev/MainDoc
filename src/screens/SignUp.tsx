@@ -5,6 +5,7 @@ import { Center, Heading, HStack, Text, ScrollView, VStack } from "@gluestack-ui
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
+import * as yup from "yup"
 
 
 type FormDataProps = {
@@ -14,6 +15,10 @@ type FormDataProps = {
     password: string;
     password_confirm: string;
 }
+
+const signUpSchema = yup.object({
+    name: yup.string().required("Informe o nome")
+})
 
 
 
