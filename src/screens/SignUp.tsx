@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
 import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 
 type FormDataProps = {
@@ -17,14 +18,19 @@ type FormDataProps = {
 }
 
 const signUpSchema = yup.object({
-    name: yup.string().required("Informe o nome")
+    cpf: yup.string().required("Informe o CPF"),
+    username: yup.string().required("Informe o Username"),
+    email: yup.string().required("Informe o E-mail").email("E-mail inválido"),
+    password: yup.string().required("Informe a senha").min(6, "6 dígitos mínimos")
 })
 
 
 
 export const SignUp = () => {
 
-    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>();
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
+        resolver: yupResolver(signUpSchema)
+    });
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
@@ -58,9 +64,6 @@ export const SignUp = () => {
                         <Controller 
                             control={control}
                             name="cpf"
-                            rules={{
-                                required: "Informe o CPF"
-                            }}
                             render={({field: { onChange, value }}) => (
                                 <Input placeholder="CPF" autoCorrect={false} keyboardType="number-pad" onChangeText={onChange} value={value} errorMessage={errors.cpf?.message} />
                             )}                        
@@ -80,9 +83,6 @@ export const SignUp = () => {
                         <Controller 
                             control={control}
                             name="email"
-                            rules={{
-                                required: "Informe o E-mail"
-                            }}
                             render={({field: { onChange, value }}) => (
                                 <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} value={value} errorMessage={errors.email?.message} />
                             )}                        
@@ -91,7 +91,6 @@ export const SignUp = () => {
                         <Controller 
                             control={control}
                             name="password"
-                            rules={{required: "Informe a senha"}}
                             render={({field: { onChange, value }}) => (
                                 <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} errorMessage={errors.password?.message} />
                             )}                        
