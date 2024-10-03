@@ -7,18 +7,26 @@ import { Logo } from "@components/Logo"
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 type FormDataProps = {
     username: string;
     password: string;
 }
 
+const signUpSchema = yup.object({
+    username: yup.string().required("Informe o username"),
+    password: yup.string().required("Informe a senha")
+})
 
 
 
 export const SignIn = () => {
 
-    const { control, handleSubmit } = useForm<FormDataProps>();
+    const { control, handleSubmit, formState: {errors} } = useForm<FormDataProps>({
+        resolver: yupResolver(signUpSchema)
+    });
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
@@ -52,14 +60,14 @@ export const SignIn = () => {
                             control={control}
                             name="username"
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} />
+                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
                             )}                        
                         />
                         <Controller 
                             control={control}
                             name="password"
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} />
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
                             )}                        
                         />
 

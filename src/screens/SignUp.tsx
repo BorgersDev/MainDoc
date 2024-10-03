@@ -21,7 +21,8 @@ const signUpSchema = yup.object({
     cpf: yup.string().required("Informe o CPF"),
     username: yup.string().required("Informe o Username"),
     email: yup.string().required("Informe o E-mail").email("E-mail inválido"),
-    password: yup.string().required("Informe a senha").min(6, "6 dígitos mínimos")
+    password: yup.string().required("Informe a senha").min(6, "6 dígitos mínimos"),
+    password_confirm: yup.string().required("Confirme a senha").oneOf([yup.ref("password"), ""], "Está diferente da senha")
 })
 
 
@@ -84,7 +85,7 @@ export const SignUp = () => {
                             control={control}
                             name="email"
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" onChangeText={onChange} value={value} errorMessage={errors.email?.message} />
+                                <Input placeholder="E-mail" autoCorrect={false} keyboardType="email-address" autoCapitalize="none" onChangeText={onChange} value={value} errorMessage={errors.email?.message} />
                             )}                        
                         />
                         
