@@ -9,6 +9,7 @@ import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+import axios from "axios"
 
 type FormDataProps = {
     username: string;
@@ -31,7 +32,13 @@ export const SignIn = () => {
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
     const handleSignIn = (data: FormDataProps) => {
-        console.log(data)
+        console.log('1')
+        axios.get("https://maindoc.com.br/usuario/login", {
+            auth: {
+                username: 'admin',
+                password: 'admin'
+            }
+        }).then(e => console.log(e.data)).catch(e => console.log(e)) 
     }
 
     const handleNewAccount = () => {
