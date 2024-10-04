@@ -35,8 +35,8 @@ export const SignIn = () => {
         console.log('1')
         axios.get("https://maindoc.com.br/usuario/login", {
             auth: {
-                username: 'admin',
-                password: 'admin'
+                username: data.username,
+                password: data.password
             }
         }).then(e => console.log(e.data)).catch(e => console.log(e)) 
     }
@@ -67,7 +67,7 @@ export const SignIn = () => {
                             control={control}
                             name="username"
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="Username" autoCorrect={false} onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
+                                <Input placeholder="Username" autoCorrect={false} autoCapitalize="none" onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
                             )}                        
                         />
                         <Controller 
