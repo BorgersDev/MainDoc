@@ -9,7 +9,9 @@ import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+
 import axios from "axios"
+import { api } from "@services/api"
 
 type FormDataProps = {
     username: string;
@@ -31,14 +33,20 @@ export const SignIn = () => {
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
-    const handleSignIn = (data: FormDataProps) => {
-        console.log('1')
-        axios.get("https://maindoc.com.br/usuario/login", {
-            auth: {
-                username: data.username,
-                password: data.password
+    const handleSignIn = async (data: FormDataProps) => {
+        try {
+            const response = await api.get('/usuario/login', {
+                auth: {
+                    username: data.username,
+                    password: data.password
+                }
+            });
+            console.log(response.data)
+        } catch (error) {
+            if(axios.isAxiosError(error)){
+                console.log(error.response?.data)
             }
-        }).then(e => console.log(e.data)).catch(e => console.log(e)) 
+        }
     }
 
     const handleNewAccount = () => {
@@ -74,7 +82,7 @@ export const SignIn = () => {
                             control={control}
                             name="password"
                             render={({field: { onChange, value }}) => (
-                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} errorMessage={errors.username?.message} />
+                                <Input placeholder="Senha" autoCapitalize="none" autoCorrect={false} secureTextEntry onChangeText={onChange} value={value} errorMessage={errors.password?.message} />
                             )}                        
                         />
 
