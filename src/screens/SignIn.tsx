@@ -1,4 +1,4 @@
-import { Center, Heading, HStack, ScrollView, Text, VStack } from "@gluestack-ui/themed"
+import { Center, Heading, HStack, ScrollView, Text, VStack, useToast } from "@gluestack-ui/themed"
 
 
 import { Button } from "@components/Button"
@@ -12,6 +12,8 @@ import { yupResolver } from "@hookform/resolvers/yup"
 
 import axios from "axios"
 import { api } from "@services/api"
+import { AppError } from "@utils/AppError"
+import { ToastMessage } from "@components/ToastMessage"
 
 type FormDataProps = {
     username: string;
@@ -26,6 +28,7 @@ const signUpSchema = yup.object({
 
 
 export const SignIn = () => {
+    const toast = useToast();
 
     const { control, handleSubmit, formState: {errors} } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
@@ -43,9 +46,20 @@ export const SignIn = () => {
             });
             console.log(response.data)
         } catch (error) {
-            if(axios.isAxiosError(error)){
-                console.log(error.response?.data)
-            }
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message: 'Erro de autenticação, tente novamente mais tarde.'
+
+            toast.show({
+                placement: 'top',
+                render: ({id}) => (
+                    <ToastMessage
+                        id={id}
+                        title={title}
+                        onClose={() => toast.close(id)}
+                        action="error"
+                    />
+                )
+            });
         }
     }
 
