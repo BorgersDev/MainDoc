@@ -10,10 +10,10 @@ import { useForm, Controller } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 
-import axios from "axios"
-import { api } from "@services/api"
 import { AppError } from "@utils/AppError"
 import { ToastMessage } from "@components/ToastMessage"
+import { useAuth } from "@hooks/useAuth"
+import { useState } from "react"
 
 type FormDataProps = {
     username: string;
@@ -28,6 +28,10 @@ const signUpSchema = yup.object({
 
 
 export const SignIn = () => {
+    const [isLoading, setIsLoading] = useState(false)
+
+    const { signIn } = useAuth();
+
     const toast = useToast();
 
     const { control, handleSubmit, formState: {errors} } = useForm<FormDataProps>({
@@ -36,18 +40,15 @@ export const SignIn = () => {
 
     const navigator = useNavigation<AuthNavigationRoutesProps>();
 
-    const handleSignIn = async (data: FormDataProps) => {
+    const handleSignIn = async ({username, password}: FormDataProps) => {
         try {
-            const response = await api.get('/usuario/login', {
-                auth: {
-                    username: data.username,
-                    password: data.password
-                }
-            });
-            console.log(response.data)
+            setIsLoading(true)
+            await signIn(username, password)
         } catch (error) {
             const isAppError = error instanceof AppError;
             const title = isAppError ? error.message: 'Erro de autenticação, tente novamente mais tarde.'
+
+            setIsLoading(false)
 
             toast.show({
                 placement: 'top',
@@ -60,7 +61,7 @@ export const SignIn = () => {
                     />
                 )
             });
-        }
+        } 
     }
 
     const handleNewAccount = () => {
@@ -101,7 +102,7 @@ export const SignIn = () => {
                         />
 
 
-                        <Button title="Entrar" my="$14" onPress={handleSubmit(handleSignIn)} />
+                        <Button title="Entrar" my="$14" onPress={handleSubmit(handleSignIn)} isLoading={isLoading} />
                     </Center>
 
                 </VStack>
