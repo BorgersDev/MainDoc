@@ -46,10 +46,10 @@ export const SignIn = () => {
             await signIn(username, password)
         } catch (error) {
             const isAppError = error instanceof AppError;
-            const title = isAppError ? error.message: 'Erro de autenticação, tente novamente mais tarde.'
+            const title = isAppError ? error.message : 'Erro de autenticação, tente novamente mais tarde.'
 
             setIsLoading(false)
-
+  
             toast.show({
                 placement: 'top',
                 render: ({id}) => (
