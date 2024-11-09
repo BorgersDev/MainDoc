@@ -33,7 +33,7 @@ export const AppRoutes = ( ) => {
         }}>
         <Screen name="Home" component={Home} />
         <Screen name="Arquivos" component={Arquivos} />
-        <Screen name="Usuário" component={Usuario} />
+        <Screen name="Usuário" options={{ headerShown: true }} component={Usuario} />
         <Screen name="Departamento" component={Departamento} />
         <Screen name="Empresa" component={Empresa} />
         <Screen name="Licenca" component={Licenca} />
