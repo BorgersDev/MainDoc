@@ -18,8 +18,14 @@ import { Logo } from "./Logo";
 import { Feather } from "@expo/vector-icons";
 import { Accordion } from "@gluestack-ui/themed";
 import { Pressable } from "react-native";
+import { useAuth } from "@hooks/useAuth";
+
 
 export const HomeHeader = () => {
+
+  const { user } = useAuth();
+
+
   return (
     <Accordion
       width="$full"
@@ -75,10 +81,10 @@ export const HomeHeader = () => {
           <HStack justifyContent="space-between" alignItems="center">
             <VStack>
               <AccordionContentText fontFamily="$body">
-                Nome: <Text fontFamily="$heading">Rodrigo Wind</Text>
+                Nome: <Text fontFamily="$heading">{user.nome}</Text>
               </AccordionContentText>
               <AccordionContentText fontFamily="$body">
-                Empresa: <Text fontFamily="$heading">Otimize-Ti</Text>
+                Empresa: <Text fontFamily="$heading">{user.nomeEmpresa}</Text>
               </AccordionContentText>
             </VStack>
             <Pressable>
