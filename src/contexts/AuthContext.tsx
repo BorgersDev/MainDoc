@@ -4,6 +4,7 @@ import { UserDTO } from "@dtos/UserDTO";
 import { api } from "@services/api";
 
 import { getUserStorage, removeUserStorage, saveUserStorage } from "@storage/storageUser";
+import { useLoading } from "@hooks/useLoading";
 
 export type AuthContextDataProps = {
     user: UserDTO;
@@ -20,6 +21,7 @@ type AuthContextProviderProps = {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [ isLoadingUserStorageData, setIsLoadingUserStorageData ] = useState(true)
     const [ user, setUser] = useState<UserDTO>({} as UserDTO)
+    const {setLoading} = useLoading();
 
       const signIn = async (username: string, password: string ) => {
         try {
@@ -41,27 +43,29 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
       const loadUserData = async () => {
         try {
-            setIsLoadingUserStorageData(true)
+            setLoading(true)
             const userLogged = await getUserStorage();
 
             if (userLogged) {
                  setUser(userLogged);
-                 setIsLoadingUserStorageData(false)
+                 setLoading(false)
             }
         } catch (error) {
             throw error;
+        } finally {
+            setLoading(false)
         }
       }
 
       const signOut = async () => {
         try {
-            setIsLoadingUserStorageData(true);
+            setLoading(true);
             setUser({} as UserDTO);
             await removeUserStorage()
         } catch (error) {
             throw error
         } finally  {
-            setIsLoadingUserStorageData(false)
+            setLoading(false)
         }
       }
 

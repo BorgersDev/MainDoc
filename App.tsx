@@ -14,16 +14,27 @@ import { Loading } from '@components/Loading';
 
 import { AuthContext, AuthContextProvider } from '@contexts/AuthContext';
 import { NavigationProvider } from '@contexts/NavigationContext';
+import { LoadingContextProvider } from '@contexts/LoadingContext';
+
+import { useLoading } from '@hooks/useLoading';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
 
+  const {isLoading, setLoading} = useLoading()
+
+  const fontloaded = () => {
+    {fontsLoaded ? setLoading(false) : setLoading(true)}
+  }
+ 
   return (
     <NavigationProvider>
       <GluestackUIProvider config={config}>
-        <AuthContextProvider>
-              {fontsLoaded ? <Routes /> : <Loading />}
-        </AuthContextProvider>
+        <LoadingContextProvider>
+          <AuthContextProvider>
+              { isLoading ? <Loading /> : <Routes /> }
+          </AuthContextProvider>
+        </LoadingContextProvider>
         <StatusBar style="auto" />
       </GluestackUIProvider>
     </NavigationProvider>
