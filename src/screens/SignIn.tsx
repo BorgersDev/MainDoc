@@ -101,14 +101,14 @@ export const SignIn = () => {
             px="$12"
             
           >
-            <Center my="$33">
+            <Center my="$28">
               <Logo />
             </Center>
 
             <Center gap="$4">
                 <VStack alignItems="center" pb="$5">
                     <Heading fontSize="$2xl" color="$gray700"> Acesse sua conta </Heading>
-                    <Text color="$gray700" fontSize="$md">Informe o username e a senha para login</Text>
+                    <Text color="$gray700" fontSize="$sm">Informe o username e a senha para login</Text>
                 </VStack>
               
 

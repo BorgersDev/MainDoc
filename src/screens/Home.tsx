@@ -24,7 +24,7 @@ import {
   VStack,
 } from "@gluestack-ui/themed";
 import { useNavigation } from "@react-navigation/native";
-import { AppNavigationRoutesProps } from "@routes/app.routes";
+import { AppNavigationRoutesProps } from "@routes/sprint2approutes";
 import { useNavigationStateContext } from '@contexts/NavigationContext';
 import { ChartCard } from '@components/ChartCard';
 
