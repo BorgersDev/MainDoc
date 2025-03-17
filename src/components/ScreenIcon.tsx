@@ -1,4 +1,6 @@
-import { Box, Center, Text } from "@gluestack-ui/themed";
+import { Text } from "@/components/ui/text";
+import { Center } from "@/components/ui/center";
+import { Box } from "@/components/ui/box";
 import { Pressable, GestureResponderEvent } from "react-native";
 import { ComponentProps } from "react";
 import { icon } from "../../constants/icon";
@@ -23,21 +25,19 @@ export const ScreenIcon = ({ screen, realName = screen, onPress, ...rest }: Scre
             onPress={handlePress}
             {...rest}
         >
-            <Center gap="$2">
+            <Center className="gap-2">
                 <Box
-                    bg="$gray600"
-                    padding="$4"
-                    borderRadius="$lg"
                     shadowColor="$gray300"
                     shadowOffset={{ width: 0, height: 3 }}
                     shadowRadius={6}
                     shadowOpacity={0.2}
-                >
+                    className="bg-gray-600 p-4 rounded-lg">
                     {icon[screen]({
                         color: "#00419d"
                     })}
                 </Box> 
-                <Text fontFamily="$heading" textAlign="center" color="$gray100" flexWrap="wrap" width="100%" fontSize="$xs">
+                <Text
+                    className="font-heading text-center text-gray-100 flex-wrap w-[100%] text-xs">
                     {words[0]} {"\n"} {words.length > 1 && words[1]}  
                 </Text>
             </Center>

@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
+import "@/global.css";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import "@/global.css"
 import {
   useFonts,
   Karla_400Regular,
   Karla_700Bold
 } from "@expo-google-fonts/karla"
 
-import { GluestackUIProvider } from "@gluestack-ui/themed"
 import { config } from "./config/gluestack-ui.config"
 
 import { Routes } from './src/routes';
@@ -29,7 +31,7 @@ export default function App() {
  
   return (
     <NavigationProvider>
-      <GluestackUIProvider config={config}>
+      <GluestackUIProvider >
         <LoadingContextProvider>
           <AuthContextProvider>
               { isLoading ? <Loading /> : <Routes /> }

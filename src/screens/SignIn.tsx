@@ -1,12 +1,8 @@
-import {
-  Center,
-  Heading,
-  HStack,
-  ScrollView,
-  Text,
-  VStack,
-  useToast,
-} from "@gluestack-ui/themed";
+import { useToast } from "@/components/ui/toast";
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Center } from "@/components/ui/center";
 
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
@@ -36,9 +32,7 @@ const signUpSchema = yup.object({
 
 export const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
-
   const { signIn } = useAuth();
-
   const toast = useToast();
 
   const {
@@ -80,76 +74,66 @@ export const SignIn = () => {
   const handleNewAccount = () => {
     navigator.navigate("signUp");
   };
+
   return (
-    <LinearGradient
-         colors={['#003B8D', '#001738']}
-         
-    >
+    <LinearGradient colors={["#003B8D", "#001738"]} style={{ flex: 1 }}>
       <ScrollView
-        w="$full"
-        h="$full"
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         automaticallyAdjustKeyboardInsets
         bounces={false}
-        $active-alignItems="center"
+        className="w-full h-full"
       >
-          <VStack
-            w="$full"
-            h="$full"
-            flex={1}
-            px="$12"
-            
-          >
-            <Center my="$28">
-              <Logo />
-            </Center>
+        <VStack className="flex-1 w-full px-12">
+          <Center className="my-28">
+            <Logo />
+          </Center>
 
-            <Center gap="$4">
-                <VStack alignItems="center" pb="$5">
-                    <Heading fontSize="$2xl" color="$gray700"> Acesse sua conta </Heading>
-                    <Text color="$gray700" fontSize="$sm">Informe o username e a senha para login</Text>
-                </VStack>
-              
+          <Center className="gap-4 w-full mt-10">
+            <VStack className="items-center pb-5">
+              <Text className="text-2xl text-gray700 font-heading">Acesse sua conta  </Text>
+              <Text className="text-gray700 text-sm"> Informe o username e a senha para login </Text>
+            </VStack>
 
-              <Controller
-                control={control}
-                name="username"
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Username"
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={errors.username?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Senha"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry
-                    onChangeText={onChange}
-                    value={value}
-                    errorMessage={errors.password?.message}
-                  />
-                )}
-              />
-              <Button
-                title="Logar"
-                my="$14"
-                bgColor="#003B8D"
-                onPress={handleSubmit(handleSignIn)}
-                isLoading={isLoading}
-              />
-            </Center>
-          </VStack>
+            <Controller
+              control={control}
+              name="username"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Username"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={errors.username?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Senha"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={errors.password?.message}
+                />
+              )}
+            />
+
+            <Button
+              title="Logar "
+              className="my-14 h-12 w-full bg-blue-900"
+              onPress={handleSubmit(handleSignIn)}
+              isLoading={isLoading}
+            />
+          </Center>
+        </VStack>
       </ScrollView>
     </LinearGradient>
   );

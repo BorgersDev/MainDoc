@@ -1,6 +1,11 @@
-import { Box, useBreakpointValue } from '@gluestack-ui/themed';
-import { Card, Heading, HStack, Text, VStack } from '@gluestack-ui/themed'
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { HStack } from "@/components/ui/hstack";
+import { Heading } from "@/components/ui/heading";
+import { Card } from "@/components/ui/card";
+import { Box } from "@/components/ui/box";
 import PieChart from 'react-native-pie-chart'
+import { useBreakpointValue } from "@/components/ui/utils/use-break-point-value";
 
 export const ChartCard = () => {
     const documentData = [
@@ -15,56 +20,38 @@ export const ChartCard = () => {
     const sliceColor = documentData.map(doc => doc.color)
 
     // Use breakpoint value to determine the layout
-    const layout = useBreakpointValue({
+    const layout = useBreakpointValue { 
         base: 'wrap', // smaller screens
         md: 'row' // larger screens
     });
 
     return (
         <Card
-            mt="$5"
             size="sm"
             variant="elevated"
-            mx="5%"
-            borderRadius="$2xl"
             shadowColor="$gray300"
             shadowOffset={{ width: 0, height: 3 }}
             shadowRadius={6}
             shadowOpacity={0.2}
-            bg="$gray600"
-        >
+            className="mt-5 mx-[5%] rounded-2xl bg-gray-600">
             <Heading size="sm">Arquivos por tipo</Heading>
-
-            <VStack mt="$2" >
+            <VStack className="mt-2" >
                 <HStack
-                    gap="$0.5"
-                    alignItems="center"
-                    flexWrap={layout} // Apply the layout based on screen size
-                    flexDirection={layout === 'wrap' ? 'row' : 'row'} // Change direction for wrap layout
-                >
+                    className={` ${layout === 'wrap' ? "flex-row" : "flex-row"} flexWrap-${layout} gap-0.5 items-center `}>
                     {documentData.map((doc, index) => (
                         <HStack
                             key={index}
-                            alignItems="center"
-                            flexDirection={layout === 'wrap' && index >= 3 ? 'row' : 'row'} // Break line after 3 items for smaller screens
-                        >
-                            <Box
-                                h="$1.5"
-                                w="$1.5"
-                                m="$0.5"
-                                borderRadius={50}
-                                bg={doc.color} 
-                            />
-                            <Text fontFamily="$heading" textAlign="center" color="$gray100" fontSize="$1xs">{doc.typeName}</Text>
-                            <Text fontFamily="$heading" textAlign="center" color="$gray100" fontSize="$1xs">- {doc.quantity}</Text>
+                            className={` ${layout === 'wrap' && index >= 3 ? "flex-row" : "flex-row"} items-center `}>
+                            <Box className={` bg-${doc.color} h-1.5 w-1.5 m-0.5 rounded-[50px] `} />
+                            <Text className="font-heading text-center text-gray-100 text-1xs">{doc.typeName}</Text>
+                            <Text className="font-heading text-center text-gray-100 text-1xs">- {doc.quantity}</Text>
                         </HStack>
                     ))}
                 </HStack>
             </VStack>
-
-            <HStack justifyContent="center" mt="$3">
+            <HStack className="justify-center mt-3">
                 <PieChart widthAndHeight={180} series={series} sliceColor={sliceColor} />
             </HStack>
         </Card>
-    )
+    );
 }

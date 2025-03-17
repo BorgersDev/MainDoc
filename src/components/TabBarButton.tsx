@@ -42,21 +42,21 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } f
   });
 
   return (
-        <Pressable
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={styles.tabbarItem}
-          >
-            <Animated.View style={animatedIconStyle} >
-              {icon[routeName]({
-                  color: isFocused ? '#fff' : '#222' ,
-              })}
-            </Animated.View>
-            <Animated.Text style={[{ color: isFocused ? '#00419d' : '#222', fontSize: 12 }, animatedTextStyle]}>
-              {label}
-            </Animated.Text>
-        </Pressable>
-  )
+    <Pressable
+        onPress={onPress}
+        onLongPress={onLongPress}
+        style={styles.tabbarItem}
+      >
+      <Animated.View style={animatedIconStyle} >
+        {icon[routeName]({
+            color: isFocused ? '#fff' : '#222' ,
+        })}
+      </Animated.View>
+      <Animated.Text style={[{ color: isFocused ? '#00419d' : '#222', fontSize: 12 }, animatedTextStyle]}>
+        {label}
+      </Animated.Text>
+    </Pressable>
+  );
 }
 
 export default TabBarButton;

@@ -1,4 +1,6 @@
-import { HStack, Image, Text } from "@gluestack-ui/themed"
+import { Text } from "@/components/ui/text";
+import { Image } from "@/components/ui/image";
+import { HStack } from "@/components/ui/hstack";
 import LogoImg from "@assets/MainDocLogo.png"
 
 type LogoProps = {
@@ -7,9 +9,11 @@ type LogoProps = {
 
 export const Logo = ({variant = "size1", ...rest}: LogoProps) => {
     return (
-        <HStack flex={1} alignItems="center" {...rest}>
+        <HStack {...rest} className="flex-1 items-center">
             <Image source={LogoImg} size={variant === "size1" ? "2xs" : "3xs"} resizeMode="contain" alt="Main Doc Logo" />
-            <Text color={variant === "size1" ? "$gray700" : "$blue900"} size={variant === "size1" ? "3xl" : "2xl"} fontFamily="$heading"> MainDoc  </Text>
+            <Text
+                size={variant === "size1" ? "3xl" : "2xl"}
+                className={` ${variant === "size1" ? "text-gray-200" : "text-blue-900"} font-heading `}> MainDoc  </Text>
         </HStack>
-    )
+    );
 }

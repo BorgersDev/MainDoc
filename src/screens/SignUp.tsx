@@ -1,7 +1,12 @@
+import { VStack } from "@/components/ui/vstack";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Text } from "@/components/ui/text";
+import { HStack } from "@/components/ui/hstack";
+import { Heading } from "@/components/ui/heading";
+import { Center } from "@/components/ui/center";
 import { Button } from "@components/Button"
 import { Input } from "@components/Input"
 import { Logo } from "@components/Logo"
-import { Center, Heading, HStack, Text, ScrollView, VStack } from "@gluestack-ui/themed"
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigationRoutesProps } from "@routes/auth.routes"
 import { useForm, Controller } from "react-hook-form"
@@ -44,23 +49,21 @@ export const SignUp = () => {
     }
 
     return (
-        <ScrollView 
-            w="$full"
-            contentContainerStyle={{ flexGrow: 1}} 
-            showsVerticalScrollIndicator={false} 
-            automaticallyAdjustKeyboardInsets 
+        <ScrollView
+            contentContainerStyle={{ flexGrow: 1}}
+            showsVerticalScrollIndicator={false}
+            automaticallyAdjustKeyboardInsets
             bounces={false}
-            $active-alignItems="center"
-        >
-            <VStack w="$full" flex={1} bg="$gray700"  >
-                <VStack w="$full" flex={1} px="$12"  bg="$gray600" rounded="$3xl">
+            className="w-full  active:items-center">
+            <VStack className="w-full flex-1 bg-gray-700">
+                <VStack className="w-full flex-1 px-12 bg-gray-600 rounded-3xl">
 
-                    <Center  my="$33">
+                    <Center  className="my-33">
                         <Logo />
                     </Center>
 
-                    <Center  my="-$14" gap="$2">
-                        <Heading fontSize="$md" > Crie sua conta </Heading>
+                    <Center className="my--14 gap-2">
+                        <Heading className="text-md" > Crie sua conta </Heading>
 
                         <Controller 
                             control={control}
@@ -111,12 +114,12 @@ export const SignUp = () => {
 
                 </VStack>
                 
-                <Center h="$40" flex={1} px="$12">
-                    <Heading fontSize="$sm" fontFamily="$heading" >Já possui uma conta? </Heading>
+                <Center className="h-40 flex-1 px-12">
+                    <Heading className="text-sm font-heading">Já possui uma conta? </Heading>
 
                     <Button title="Faça Login" variant="clear" onPress={handleGoBack} />
                 </Center>
             </VStack>
         </ScrollView>
-    )
+    );
 }

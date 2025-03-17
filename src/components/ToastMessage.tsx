@@ -1,12 +1,8 @@
-import {
-    ToastDescription,
-    ToastTitle,
-    Toast,
-    Pressable,
-    Icon,
-    VStack,
-    HStack
-} from "@gluestack-ui/themed"
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { Icon } from "@/components/ui/icon";
+import { Pressable } from "@/components/ui/pressable";
+import { ToastDescription, ToastTitle, Toast } from "@/components/ui/toast";
 import {Feather} from "@expo/vector-icons"
 
 type Props = {
@@ -19,22 +15,19 @@ type Props = {
 }
 export const ToastMessage = ({id, title, description, action="success", onClose}: Props) => {
     return (
-        <Toast 
-            nativeID={`toast-${id}`} 
-            action={action} 
-            bgColor={action === "success" ? "$green500" : "$error700"} 
-            mt="$10"
-            
-        >
-            <VStack space="xs" w="$full" >
-                <HStack justifyContent="space-between">
+        <Toast
+            nativeID={`toast-${id}`}
+            action={action}
+            className={` ${action === "success" ? "bg-green-500" : "bg-error-700"} mt-10 `}>
+            <VStack space="xs" className="w-full" >
+                <HStack className="justify-between">
                     <VStack>
                         
-                        <ToastTitle color="$white" fontFamily="$heading">
+                        <ToastTitle className="text-white font-heading">
                             {title}
                         </ToastTitle>
                         {description && (
-                            <ToastDescription color="$white" fontFamily="$body" >
+                            <ToastDescription className="text-white font-body">
                                 {description}
                             </ToastDescription>
                         )}
@@ -44,7 +37,6 @@ export const ToastMessage = ({id, title, description, action="success", onClose}
                     </Pressable>
                 </HStack>
             </VStack>
-
         </Toast>
-    )
+    );
 }

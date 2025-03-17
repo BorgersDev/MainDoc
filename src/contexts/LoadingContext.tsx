@@ -24,6 +24,6 @@ export const LoadingContextProvider = ({children}: LoadingContextProviderProps) 
         <LoadingContext.Provider value={{isLoading, setLoading}}>
             {children}
         </LoadingContext.Provider>
-    )
+    );
 
 }

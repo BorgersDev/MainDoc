@@ -3,17 +3,45 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@dtos/*": ["./src/dtos/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@screens/*": ["./src/screens/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@storage/*": ["./src/storage/*"],
-      "@services/*": ["./src/services/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@contexts/*": ["./src/contexts/*"],
-      "@routes/*": ["./src/routes/*"],
-      "@constants/*": ["./src/constants/*"]
+      "@dtos/*": [
+        "./src/dtos/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@screens/*": [
+        "./src/screens/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@storage/*": [
+        "./src/storage/*"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@contexts/*": [
+        "./src/contexts/*"
+      ],
+      "@routes/*": [
+        "./src/routes/*"
+      ],
+      "@constants/*": [
+        "./src/constants/*"
+      ],
+      "@/*": [
+        "./*"
+      ],
+      "tailwind.config": [
+        "./tailwind.config.js"
+      ]
     }
   }
 }

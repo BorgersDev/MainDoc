@@ -1,32 +1,29 @@
-import { ComponentProps } from "react"
-
-import { ButtonSpinner, Button as GluestackButton, Text,  } from "@gluestack-ui/themed"
+import { Text } from "@/components/ui/text";
+import { ButtonSpinner, Button as GluestackButton } from "@/components/ui/button";
+import { ComponentProps } from "react";
 
 type Props = ComponentProps<typeof GluestackButton> & {
-    title: string;
-    variant?: "dark" | "clear";
-    isLoading?: boolean;
-} 
+  title: string;
+  variant?: "dark" | "clear";
+  isLoading?: boolean;
+};
 
-export const Button = ({title, variant = "dark" , isLoading = false, ...rest}: Props) => {
-    return (
-        <GluestackButton 
-            w="$full"
-            h="$12"
-            bg={ variant === "dark" ? "$blue900" : "$gray500" }
-            borderWidth="$0"
-            rounded="$md"
-            $active-bg={ variant === "dark" ? "$blue800" : "$warmGray200" }
-            disabled={isLoading}
-            {...rest}
-        >
-            {isLoading ? ( 
-                <ButtonSpinner color="$gray700" /> 
-             ) : (
-                <Text color={variant === "dark" ? "$gray700" : "$gray200"} fontFamily="$heading" fontSize="$md">{title}</Text>
-             )
-            }
-            
-        </GluestackButton>
-    )
-}
+export const Button = ({ title, variant = "dark", isLoading = false, ...rest }: Props) => {
+  return (
+    <GluestackButton
+      className={`rounded-3xl border-0 text-lg
+        ${variant === "dark" ? "bg-blue100 active:bg-blue200" : "bg-gray100 active:bg-gray200"}`
+      }
+      disabled={isLoading}
+      {...rest}
+    >
+      {isLoading ? (
+        <ButtonSpinner className="text-gray500 w-6 h-6" />
+      ) : (
+        <Text className={`${variant === "dark" ? "text-gray500" : "text-gray100"} font-heading text-lg`}> 
+          {title} 
+        </Text>
+      )}
+    </GluestackButton>
+  );
+};

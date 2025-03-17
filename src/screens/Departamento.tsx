@@ -1,12 +1,13 @@
-import { Center, Text } from "@gluestack-ui/themed";
+import { Text } from "@/components/ui/text";
+import { Center } from "@/components/ui/center";
 
 
 
 
 export const Departamento = ( ) => {
     return (
-        <Center flex={1}>
+        <Center className="flex-1">
             <Text>Departamento</Text>
         </Center>
-    )
+    );
 }

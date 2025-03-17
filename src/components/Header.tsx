@@ -1,18 +1,16 @@
+import { ChevronUpIcon } from "@/components/ui/icon";
 import {
-  HStack,
-  VStack,
-  Text,
-  Input,
-  InputField,
   Accordion,
   AccordionContent,
-  AccordionContentText,
   AccordionHeader,
   AccordionIcon,
   AccordionItem,
   AccordionTrigger,
-  ChevronUpIcon,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/accordion";
+import { Input, InputField } from "@/components/ui/input";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
+import { HStack } from "@/components/ui/hstack";
 import { Feather } from "@expo/vector-icons";
 import { PopupMenu } from "./PopupMenu";
 import { useAuth } from "@hooks/useAuth";
@@ -22,67 +20,54 @@ import { TouchableOpacity } from "react-native";
 
 export const Header = () => {
   const { signOut } = useAuth();
-
   const navigator = useNavigation<AppNavigationRoutesProps>();
+
   return (
     <VStack>
-      <Accordion
-        type="multiple"
-        shadowColor="transparent"
-      >
+      <Accordion type="multiple" className="shadow-transparent">
         <AccordionItem value="a">
-            <HStack  justifyContent="space-between">
-              <HStack bg="$gray700" justifyContent="space-between" px="$4" py="$2" alignItems="center">
-                <HStack gap="$2" alignItems="center" w="$80%" >
-                  <Feather name="user" size={27} color="$gray300" />
-                  <VStack>
-                    <Text fontFamily="$heading">Arthur Borges</Text>
-                    <Text>Nov4 Lab</Text>
-                  </VStack>
-                </HStack>
-                  <PopupMenu
-                    items={[
-                      {
-                        title: "Trocar de empresa",
-                        icon: "repeat",
-                        action: () => navigator.navigate("TrocarEmpresa"),
-                      },
-                      {
-                        title: "Logout",
-                        icon: "log-out",
-                        action: () => signOut(),
-                      },
-                    ]}
-                  />
+          <HStack className="justify-between">
+            <HStack className="bg-gray-100 justify-between px-4 py-2 items-center">
+              <HStack className=" pl-2.5 gap-2 items-center w-[80%]">
+                <Feather name="user" size={27} color="gray-300" />
+                <VStack>
+                  <Text className="font-heading">Arthur Borges</Text>
+                  <Text>Nov4 Lab</Text>
+                </VStack>
               </HStack>
-              <HStack ml="-$4" w="$30%" >
-              <AccordionTrigger backgroundColor="$gray700">
-                {({ isExpanded }) => {
-                  return (
-                    <>
-                      {isExpanded ? (
-                        <AccordionIcon as={ChevronUpIcon} />
-                      ) : (
-                        <Feather name="search" size={22} />
-                      )}
-                    </>
-                  );
-                }}
-              </AccordionTrigger>
-              </HStack>
+              <PopupMenu
+                items={[
+                  {
+                    title: "Trocar de empresa",
+                    icon: "repeat",
+                    action: () => navigator.navigate("TrocarEmpresa"),
+                  },
+                  {
+                    title: "Logout",
+                    icon: "log-out",
+                    action: () => signOut(),
+                  },
+                ]}
+              />
             </HStack>
-          <AccordionContent mt="$0" mb="$-10"
-            sx={{
-              backgroundColor: "$gray700",
-            }}>
-            <Input bg="$gray700" justifyContent="space-between" alignItems="center" mx="6%" mt="$2" h="$8" borderRadius="$lg">
+            <HStack className="ml-[-4px] w-[30%]">
+              <AccordionTrigger className="bg-gray-100">
+                {({ isExpanded }) => (
+                  <>
+                    {isExpanded ? <AccordionIcon as={ChevronUpIcon} /> : <Feather name="search" size={22} />}
+                  </>
+                )}
+              </AccordionTrigger>
+            </HStack>
+          </HStack>
+          <AccordionContent className="mt-0 mb-[-10px] bg-gray-100">
+            <Input className="bg-gray-200 justify-between items-center mx-[6%] mt-2 mb-3 h-8 rounded-lg">
               <InputField
                 placeholder="Buscar arquivo"
-                fontSize="$sm"
-                color="$gray300"
-                placeholderTextColor="$gray400"
+                placeholderTextColor="gray-400"
+                className="text-sm text-gray-300"
               />
-              <HStack mx="$2" alignItems="center">
+              <HStack className="mx-2 items-center">
                 <TouchableOpacity onPress={() => console.log("piru1")}>
                   <Feather name="search" size={18} />
                 </TouchableOpacity>

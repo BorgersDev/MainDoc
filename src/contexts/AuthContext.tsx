@@ -72,9 +72,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       useEffect(() => {
         loadUserData();
       }, []);
-    return(
+    return (
         <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData, signOut }}>
-                {children}
-          </AuthContext.Provider>
-    )
+            {children}
+        </AuthContext.Provider>
+    );
 }

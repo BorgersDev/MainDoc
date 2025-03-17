@@ -1,8 +1,11 @@
-import { Dimensions } from 'react-native';
-import { HomeHeader } from "@components/HomeHeader";
-import { ScreenIcon } from "@components/ScreenIcon";
-import { Feather } from "@expo/vector-icons";
-
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { HStack } from "@/components/ui/hstack";
+import { Heading } from "@/components/ui/heading";
+import { ChevronDownIcon, ChevronUpIcon } from "@/components/ui/icon";
+import { Center } from "@/components/ui/center";
+import { Card } from "@/components/ui/card";
 
 import {
   Accordion,
@@ -13,16 +16,14 @@ import {
   AccordionItem,
   AccordionTitleText,
   AccordionTrigger,
-  Card,
-  Center,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  Heading,
-  HStack,
-  ScrollView,
-  Text,
-  VStack,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/accordion";
+
+import { Dimensions } from 'react-native';
+import { HomeHeader } from "@components/HomeHeader";
+import { ScreenIcon } from "@components/ScreenIcon";
+import { Feather } from "@expo/vector-icons";
+
+
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "@routes/sprint2approutes";
 import { useNavigationStateContext } from '@contexts/NavigationContext';
@@ -40,46 +41,32 @@ export const Home = () => {
     navigator.navigate(screen);
   };
   return (
-
-    <VStack flex={1} bg="$gray600">
+    <VStack className="flex-1 bg-gray-600">
       <HomeHeader />
       <ScrollView 
         contentContainerStyle={{flexGrow: 1}}
       >
-        <VStack flex={1} mb="$40">
+        <VStack className="flex-1 mb-40">
           <Card
             size="sm"
             variant="elevated"
-            mx="5%"
-            borderRadius="$2xl"
             shadowColor="$gray300"
             shadowOffset={{ width: 0, height: 3 }}
             shadowRadius={6}
             shadowOpacity={0.2}
-            bg="$gray600"
-            >
+            className="mx-[5%] rounded-2xl bg-gray-600">
             <Accordion
-              width="$full"
               type="multiple"
-              borderWidth={0}
               shadowColor="$white"
-              borderRadius="$3xl"
-              >
-              <AccordionItem
-                value="a"
-                borderBottomWidth={0}
-                borderRadius="$2xl"
-                sx={{
-                  borderBottomColor: "$gray600",
-                }}
-                >
-                <AccordionHeader sx={{ backgroundColor: "$gray600" }}>
+              className="w-full border-[0px] rounded-3xl">
+              <AccordionItem value="a" className="border-b-[0px] rounded-2xl border-b-gray-600">
+                <AccordionHeader className="bg-gray-600">
                   <AccordionTrigger>
                     {({ isExpanded }) => (
                       <>
-                        <HStack w="$full" alignItems="center">
+                        <HStack className="w-full items-center">
                           <Heading size="sm">Administrativo</Heading>
-                          <Center w="$full" justifyContent="flex-end" pl="$16">
+                          <Center className="w-full justify-end pl-16">
                             <Feather
                               name={isExpanded ? "chevron-up" : "chevron-down"}
                               size={24}
@@ -91,13 +78,7 @@ export const Home = () => {
                   </AccordionTrigger>
                   <VStack>
                     <HStack
-                      pl="$1"
-                      justifyContent="space-between"  // Distribute icons evenly
-                      gap={screenWidth > 400 ? "$2" : "$2"}  // Adjust gap based on screen size
-                      w={screenWidth > 400 ? "90%" : "100%"}  // Dynamically adjust width based on screen size
-                      alignItems="center"
-                      flexShrink={1}  // Allow icons to shrink if needed
-                      >
+                      className={` ${screenWidth > 400 ? "w-[90%]" : "w-[100%]"} ${screenWidth > 400 ? "gap-2" : "gap-2"} pl-1 justify-between items-center shrink-[1px] `}>
                       <ScreenIcon onPress={handleNavigation} screen="Departamento" />
                       <ScreenIcon onPress={handleNavigation} screen="Empresa" />
                       <ScreenIcon onPress={handleNavigation} screen="TipoDeDocumento" realName="Tipo Documento" />
@@ -106,36 +87,24 @@ export const Home = () => {
                   </VStack>
                 </AccordionHeader>
 
-                <AccordionContent
-                  mt="$0"
-                  pt="$2"
-                  sx={{ backgroundColor: "$gray600" }}
-                  >
+                <AccordionContent className="mt-0 pt-2 bg-gray-600">
                   <VStack>
-                    <Heading mb="$1" py="$2" size="sm">
+                    <Heading size="sm" className="mb-1 py-2">
                       Gestão de Arquivos
                     </Heading>
                     <HStack
-                      justifyContent="flex-start"
-                      gap={screenWidth > 400 ? "$8" : "$8"}  // Adjust gap based on screen size
-                      w="$full"
-                      alignItems="center"
-                      >
+                      className={` ${screenWidth > 400 ? "gap-8" : "gap-8"} justify-start w-full items-center `}>
                       <ScreenIcon onPress={handleNavigation} screen="Arquivos" />
                       <ScreenIcon onPress={handleNavigation} screen="Lixeira" />
                     </HStack>
                   </VStack>
 
                   <VStack>
-                    <Heading mb="$1" py="$2" size="sm">
+                    <Heading size="sm" className="mb-1 py-2">
                       Segurança
                     </Heading>
                     <HStack
-                      justifyContent="flex-start"
-                      gap={screenWidth > 400 ? "$8" : "$8"}  // Adjust gap based on screen size
-                      w="$full"
-                      alignItems="center"
-                      >
+                      className={` ${screenWidth > 400 ? "gap-8" : "gap-8"} justify-start w-full items-center `}>
                       <ScreenIcon
                         onPress={handleNavigation}
                         screen="PerfilDeUsuario"
@@ -154,89 +123,65 @@ export const Home = () => {
           </Card>
 
           <Card
-            mt="$5"
             size="sm"
             variant="elevated"
-            mx="5%"
-            borderRadius="$2xl"
             shadowColor="$gray300"
             shadowOffset={{ width: 0, height: 3 }}
             shadowRadius={6}
             shadowOpacity={0.2}
-            bg="$gray600"
-            >
+            className="mt-5 mx-[5%] rounded-2xl bg-gray-600">
             <Heading size="sm">Total arquivos</Heading>
-            <HStack 
-              justifyContent="space-between"
-              px="$14"
-              py="$5"
-              >
-              <HStack alignItems="center" gap="$1.5" >
+            <HStack className="justify-between px-14 py-5">
+              <HStack className="items-center gap-1.5">
                 <Feather name="file" color="#00419d" size={18} />
-                <Heading fontSize="$md" >22</Heading>
+                <Heading className="text-md" >22</Heading>
               </HStack>
-              <HStack alignItems="center" gap="$1.5" >
+              <HStack className="items-center gap-1.5">
                 <Feather name="database" color="#00419d" size={18} />
-                <Heading fontSize="$sm" >6274kb</Heading>
+                <Heading className="text-sm" >6274kb</Heading>
               </HStack>
             </HStack>
           </Card>
 
         <ChartCard />
         <Card
-            mt="$5"
-            size="sm"
-            variant="elevated"
-            mx="5%"
-            borderRadius="$2xl"
-            shadowColor="$gray300"
-            shadowOffset={{ width: 0, height: 3 }}
-            shadowRadius={6}
-            shadowOpacity={0.2}
-            bg="$gray600"
-            >
+          size="sm"
+          variant="elevated"
+          shadowColor="$gray300"
+          shadowOffset={{ width: 0, height: 3 }}
+          shadowRadius={6}
+          shadowOpacity={0.2}
+          className="mt-5 mx-[5%] rounded-2xl bg-gray-600">
             <Heading size="sm">Arquivos Assinado Digitalmente</Heading>
-            <HStack 
-              justifyContent="space-between"
-              px="$14"
-              py="$5"
-              >
-              <HStack alignItems="center" gap="$1.5" >
+            <HStack className="justify-between px-14 py-5">
+              <HStack className="items-center gap-1.5">
                 <Feather name="file" color="#00419d" size={18} />
-                <Heading fontSize="$md" >8</Heading>
+                <Heading className="text-md" >8</Heading>
               </HStack>
-              <HStack alignItems="center" gap="$1.5" >
+              <HStack className="items-center gap-1.5">
                 <Feather name="database" color="#00419d" size={18} />
-                <Heading fontSize="$sm" >2150KB</Heading>
+                <Heading className="text-sm" >2150KB</Heading>
               </HStack>
             </HStack>
           </Card>
 
           <Card
-            mt="$5"
             size="sm"
             variant="elevated"
-            mx="5%"
-            borderRadius="$2xl"
             shadowColor="$gray300"
             shadowOffset={{ width: 0, height: 3 }}
             shadowRadius={6}
             shadowOpacity={0.2}
-            bg="$gray600"
-            >
+            className="mt-5 mx-[5%] rounded-2xl bg-gray-600">
             <Heading size="sm">Arquivos na Lixeira</Heading>
-            <HStack 
-              justifyContent="space-between"
-              px="$14"
-              py="$5"
-              >
-              <HStack alignItems="center" gap="$1.5" >
+            <HStack className="justify-between px-14 py-5">
+              <HStack className="items-center gap-1.5">
                 <Feather name="file" color="#00419d" size={18} />
-                <Heading fontSize="$md" >8</Heading>
+                <Heading className="text-md" >8</Heading>
               </HStack>
-              <HStack alignItems="center" gap="$1.5" >
+              <HStack className="items-center gap-1.5">
                 <Feather name="database" color="#00419d" size={18} />
-                <Heading fontSize="$sm" >1320KB</Heading>
+                <Heading className="text-sm" >1320KB</Heading>
               </HStack>
             </HStack>
           </Card>

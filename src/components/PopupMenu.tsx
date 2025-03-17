@@ -1,13 +1,13 @@
+import { Text } from "@/components/ui/text";
 import { Modal, TouchableOpacity, View, StyleSheet, Animated, Easing } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text } from "@gluestack-ui/themed";
 
 type PopupMenuProps = {
     items: Array<{
         title: string;
-        icon: string;
+        icon: string; 
         action: () => void;
     }>;
 }
@@ -68,7 +68,7 @@ export const PopupMenu = ({items}: PopupMenuProps) => {
     return (
         <>
             <TouchableOpacity onPress={() => resizeBox(1)}>
-                <Feather name="info" size={24} color="black" />
+                <Feather name="info" size={24} />
             </TouchableOpacity>
             <Modal transparent visible={visible}>
                 <SafeAreaView style={{flex: 1}} onTouchStart={()=> resizeBox(0)}>
@@ -76,14 +76,14 @@ export const PopupMenu = ({items}: PopupMenuProps) => {
                         {items.map((item, index) => (
                             <TouchableOpacity style={[styles.option, { borderBottomWidth: index === items.length - 1 ? 0 : 1}]} key={index} onPress={item.action}>
                                 <Feather name={item.icon} size={17} color="black" />
-                                <Text fontFamily="$heading" color="$gray300">{item.title}</Text>
+                                <Text className="font-heading text-gray-700">{item.title}</Text>
                             </TouchableOpacity>
                         ))}
                     </Animated.View>
                 </SafeAreaView>
            </Modal>
         </>
-    )
+    );
 }
 
 
