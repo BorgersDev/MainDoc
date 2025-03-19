@@ -36,6 +36,7 @@
     "react-hook-form": "^7.54.0",
     "react-native": "0.76.5",
     "react-native-css-interop": "^0.1.22",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-ios-context-menu": "3.1.0",
     "react-native-ios-utilities": "5.1.2",
     "react-native-pie-chart": "^3.1.0",

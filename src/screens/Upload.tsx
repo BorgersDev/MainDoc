@@ -8,6 +8,7 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { Box } from "@/components/ui/box";
+import DropdownComponent from "@components/DropdownComponent";
 
 
 
@@ -27,16 +28,20 @@ export const Upload = ( ) => {
                 <Box
                     className="mt-[7%] w-[90%] h-[40%] bg-gray-200 rounded-2xl"
                     style={{
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: -1 }, // Moves shadow upwards
-                    shadowOpacity: 0.3,
-                    shadowRadius: 10,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: -1 }, // Moves shadow upwards
+                        shadowOpacity: 0.3,
+                        shadowRadius: 10,
                     }}
                 >
-                    <TouchableOpacity className="flex-1 m-12">
-                        <Box className=" justify-center items-center flex-1 border-2 border-dashed border-blue-950  rounded-2xl "  >
-                            <Feather name="upload" size={30} color={"#00419d"}/>
-                            <Text className="font-heading color-blue-950">Adicionar arquivo</Text>
+                    <HStack className="  w-[100%] ">
+                    <DropdownComponent name="Departamento" />
+                    <DropdownComponent name="Tipo documento" />
+                    </HStack>
+                    <TouchableOpacity className="flex-1 m-10">
+                        <Box className=" justify-center items-center flex-1 border-2 border-dashed border-blueGray-400  rounded-2xl "  >
+                            <Feather name="upload" size={30} color={"#64748b"}/>
+                            <Text className="font-heading color-blueGray-500">Adicionar arquivo</Text>
                         </Box>
                     </TouchableOpacity>
                 </Box>
