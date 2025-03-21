@@ -40,8 +40,8 @@ export const Upload = ( ) => {
                     </HStack>
                     <TouchableOpacity className="flex-1 m-10">
                         <Box className=" justify-center items-center flex-1 border-2 border-dashed border-blueGray-400  rounded-2xl "  >
-                            <Feather name="upload" size={30} color={"#64748b"}/>
-                            <Text className="font-heading color-blueGray-500">Adicionar arquivo</Text>
+                            <Feather name="upload" size={30} color={"#075985"}/>
+                            <Text className="font-heading color-lightBlue-800">Adicionar arquivo</Text>
                         </Box>
                     </TouchableOpacity>
                 </Box>
