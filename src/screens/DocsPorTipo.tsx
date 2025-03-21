@@ -15,16 +15,13 @@ import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
 
-export const Arquivos = () => {
+export const DocsPorTipo = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const departamentos = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
-      <Header GoBack={false} />
-      <FlatList data={departamentos} keyExtractor={(item) => item} renderItem={({ item }) => (
-        <Departamentos title={item} isActive={selectedDepartment.toLowerCase() === item.toLowerCase()} onPress={() => setSelectedDepartment(item)} />
-      )} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }} style={{ marginVertical: 10, maxHeight: 44, minHeight: 44 }} />
+      <Header GoBack={true} />
       <Card className="w-[100%] h-[7%] justify-center bg-blue-800 rounded-xs mb-1">
               <HStack className="gap-4  items-center justify-space-between">
                 <Center className="w-[33%]">
@@ -53,7 +50,7 @@ export const Arquivos = () => {
                   <Text className="font-heading text-gray200 text-xs">520</Text>
                 </Center>
                 <Center className="w-[33%]">
-                  <Button className="bg-blue-700 max-h-7 max-w-16" onPress={() => navigator.navigate('DocsPorTipo')}>
+                  <Button className="bg-blue-700 max-h-7 max-w-16">
                     <Feather name="search" size={15} color={"#fff"} />
                   </Button>
                 </Center>

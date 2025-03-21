@@ -17,10 +17,16 @@ import { useAuth } from "@hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { TouchableOpacity } from "react-native";
+import { useState } from "react";
 
-export const Header = () => {
+type HeaderProps = {
+  GoBack: boolean;
+}
+
+export const Header = ({GoBack}: HeaderProps) => {
   const { signOut } = useAuth();
   const navigator = useNavigation<AppNavigationRoutesProps>();
+  const [ goback, setGoBack ] = useState(GoBack);
 
   return (
     <VStack>
@@ -29,6 +35,14 @@ export const Header = () => {
           <HStack className="justify-between">
             <HStack className="bg-gray-100 justify-between px-4 py-2 items-center">
               <HStack className=" pl-2.5 gap-2 items-center w-[80%]">
+                { goback ? 
+                <TouchableOpacity className="mr-8" onPress={() => navigator.goBack()}>
+                <HStack className=" gap-1 items-center">
+                    <Feather className="" name="arrow-left" size={22} color="gray-300" />
+                    <Text className="font-heading text-gray-950">Voltar</Text>
+                </HStack>
+                </TouchableOpacity> : <></>
+                }
                 <Feather name="user" size={27} color="gray-300" />
                 <VStack>
                   <Text className="font-heading">Arthur Borges</Text>
