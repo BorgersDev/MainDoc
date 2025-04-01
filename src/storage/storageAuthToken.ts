@@ -8,3 +8,12 @@ export async function saveAuthTokenStorage( token: string ) {
         throw error;
     }
 }
+
+export const getAuthTokenStorage = async () => {
+    const token = await AsyncStorage.getItem(AUTH_TOKEN_STORAGE);
+    return token;
+}
+
+export const removeAuthTokenStorage = async () => {
+    await AsyncStorage.removeItem(AUTH_TOKEN_STORAGE);
+}

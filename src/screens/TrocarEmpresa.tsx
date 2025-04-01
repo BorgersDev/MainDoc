@@ -8,14 +8,17 @@ import { FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@hooks/useAuth";
 
 
 
 export const TrocarEmpresa = () => {
+    const { user } = useAuth();
     const navigator = useNavigation<AppNavigationRoutesProps>();
-    let empresas = ["Matriz Goiânia", "Filial Belo Horizonte", "Filial São Paulo", "Filial Anápolis"]
+    let empresas = user.empresaVOs;
     return (
         <SafeAreaView className="flex-1 bg-gray-200">
+            <Text>{user.empresaVOs[0].codigo}</Text>
             <VStack className="flex-1">
                 <HStack className="pr-6 justify-end">
                     <TouchableOpacity onPress={() => navigator.navigate('Arquivos')}>
@@ -27,15 +30,15 @@ export const TrocarEmpresa = () => {
                 <Center className="flex-1 justify-center items-end">
                     <FlatList
                         data={empresas}
-                        keyExtractor={(item) => item}
+                        keyExtractor={(item) => item.codigo}
                         style={{ width: '100%', marginTop: 30}}
                         contentContainerStyle={{ paddingVertical: 10, marginLeft: 30, alignContent: 'center' }}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={()=> console.log('Trocar empresa: ', item)}>
+                            <TouchableOpacity onPress={()=> console.log('Trocar empresa: ', item.codigo)}>
                                 <Card className="w-[90%] min-h-[40PX] justify-center bg-gray-100 rounded-2xl mb-4">
                                     <HStack className="gap-4 px-5 items-center">
                                         <Feather name="briefcase" size={22} color={"#075985"} />
-                                        <Text className="font-heading text-lightBlue-800 text-md">{item}</Text>
+                                        <Text className="font-heading text-lightBlue-800 text-md">{item.nome}</Text>
                                     </HStack>
                                 </Card>
                             </TouchableOpacity>

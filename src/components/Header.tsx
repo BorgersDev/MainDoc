@@ -24,7 +24,7 @@ type HeaderProps = {
 }
 
 export const Header = ({GoBack}: HeaderProps) => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [ goback, setGoBack ] = useState(GoBack);
 
@@ -61,7 +61,7 @@ export const Header = ({GoBack}: HeaderProps) => {
                     icon: "log-out",
                     action: () => signOut(),
                   },
-                ]}
+                ].filter(item => user.empresaVOs|| item.title !== "Trocar de empresa")}
               />
             </HStack>
             <HStack className="ml-[-4px] w-[30%]">

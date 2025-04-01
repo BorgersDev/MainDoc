@@ -1,24 +1,59 @@
+import { useState, useEffect } from "react";
+
+
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigationRoutesProps } from "@routes/app.routes";
+
+import { FlatList, TouchableOpacity } from "react-native";
+
+import { api } from "@services/api";
+
 import { VStack } from "@/components/ui/vstack";
 import { Header } from "@components/Header";
 import { DocumentCard } from "@components/DocumentCard";
 import { Fab, FabLabel, FabIcon } from '@/components/ui/fab';
 import { AddIcon } from "@/components/ui/icon";
-import { useNavigation } from "@react-navigation/native";
-import { AppNavigationRoutesProps } from "@routes/app.routes";
-import { FlatList, TouchableOpacity } from "react-native";
 import { Departamentos } from "@components/Departamentos";
 import { Feather } from "@expo/vector-icons"
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
+import { AppError } from "@utils/AppError";
+import { useToast } from "@/components/ui/toast";
+import { ToastMessage } from "@components/ToastMessage";
 
 export const Arquivos = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const departamentos = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
+  const toast = useToast();
+  // const fetchDepartamentos = async ( ) => {
+  //   try {
+  //     const response = await api.get('/listar/departamento')
+  //     console.log('DEPARTAMENTOS =>', response.data)
+  //   } catch (error) {
+  //     const isAppError = error instanceof AppError;
+  //     const title =  "Não foi possível carregar os departamentos "
+  //     toast.show({
+  //             placement: "top",
+  //             render: ({ id }) => (
+  //               <ToastMessage
+  //                 id={id}
+  //                 title={title}
+  //                 onClose={() => toast.close(id)}
+  //                 action="error"
+  //               />
+  //             ),
+  //           });
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   fetchDepartamentos()
+  // }, [])
+
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
       <Header GoBack={false} />
