@@ -15,7 +15,7 @@ export const TrocarEmpresa = () => {
     const navigator = useNavigation<AppNavigationRoutesProps>();
     let empresas = ["Matriz Goiânia", "Filial Belo Horizonte", "Filial São Paulo", "Filial Anápolis"]
     return (
-        <SafeAreaView className="flex-1 bg-gray-300">
+        <SafeAreaView className="flex-1 bg-gray-200">
             <VStack className="flex-1">
                 <HStack className="pr-6 justify-end">
                     <TouchableOpacity onPress={() => navigator.navigate('Arquivos')}>
@@ -32,7 +32,7 @@ export const TrocarEmpresa = () => {
                         contentContainerStyle={{ paddingVertical: 10, marginLeft: 30, alignContent: 'center' }}
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={()=> console.log('Trocar empresa: ', item)}>
-                                <Card className="w-[90%] min-h-[40PX] justify-center bg-gray-200 rounded-2xl mb-4">
+                                <Card className="w-[90%] min-h-[40PX] justify-center bg-gray-100 rounded-2xl mb-4">
                                     <HStack className="gap-4 px-5 items-center">
                                         <Feather name="briefcase" size={22} color={"#075985"} />
                                         <Text className="font-heading text-lightBlue-800 text-md">{item}</Text>
