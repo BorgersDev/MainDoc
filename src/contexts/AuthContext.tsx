@@ -23,12 +23,13 @@ type AuthContextProviderProps = {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [ isLoadingUserStorageData, setIsLoadingUserStorageData ] = useState(true)
     const [ user, setUser] = useState<UserDTO>({} as UserDTO)
-    const [ maisDeUmaEmpresa, setMaisDeUmaEmpresa ] = useState(false);
     const {setLoading} = useLoading();
 
-    const userAndTokenUpdate = async ( userData: UserDTO, token: string) => {
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            setUser(userData)
+    const userAndTokenUpdate = async (userData: UserDTO, userToken: string, companyToken: string) => {
+        api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
+        api.defaults.headers.common['Token'] = companyToken;
+      
+        setUser(userData);
     }
 
     const saveUserAndTokenStorage = async (userData: UserDTO, token: string) => {
@@ -43,6 +44,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         } finally {
             setLoading(false);
         }
+
     }
 
       const signIn = async (username: string, password: string ) => {

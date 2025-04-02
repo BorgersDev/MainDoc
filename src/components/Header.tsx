@@ -45,8 +45,8 @@ export const Header = ({GoBack}: HeaderProps) => {
                 }
                 <Feather name="user" size={27} color="gray-300" />
                 <VStack>
-                  <Text className="font-heading">Arthur Borges</Text>
-                  <Text>Nov4 Lab</Text>
+                  <Text className="font-heading">{user.nome}</Text>
+                  <Text>{user.nomeEmpresa}</Text>
                 </VStack>
               </HStack>
               <PopupMenu

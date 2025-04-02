@@ -29,30 +29,33 @@ export const Arquivos = () => {
   const departamentos = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
   const toast = useToast();
-  // const fetchDepartamentos = async ( ) => {
-  //   try {
-  //     const response = await api.get('/listar/departamento')
-  //     console.log('DEPARTAMENTOS =>', response.data)
-  //   } catch (error) {
-  //     const isAppError = error instanceof AppError;
-  //     const title =  "Não foi possível carregar os departamentos "
-  //     toast.show({
-  //             placement: "top",
-  //             render: ({ id }) => (
-  //               <ToastMessage
-  //                 id={id}
-  //                 title={title}
-  //                 onClose={() => toast.close(id)}
-  //                 action="error"
-  //               />
-  //             ),
-  //           });
-  //   }
-  // }
+  const fetchDepartamentos = async ( ) => {
+    try {
+      const response = await api.get('/arquivo/listar/departamento/10/0')
+      console.log('DEPARTAMENTOS =>', response.data)
+    } catch (error) {
+      console.log(error)
+      const isAppError = error instanceof AppError;
+      const title =  "Não foi possível carregar os departamentos "
+      toast.show({
+              placement: "top",
+              render: ({ id }) => (
+                <ToastMessage
+                  id={id}
+                  title={title}
+                  onClose={() => toast.close(id)}
+                  action="error"
+                />
+              ),
+            });
+            
+    }
+  }
 
-  // useEffect(() => {
-  //   fetchDepartamentos()
-  // }, [])
+
+  useEffect(() => {
+    fetchDepartamentos()
+  }, [])
 
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
