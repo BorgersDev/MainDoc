@@ -13,7 +13,7 @@ import { useAuth } from "@hooks/useAuth";
 
 
 export const TrocarEmpresa = () => {
-    const { user } = useAuth();
+    const { user, switchComp } = useAuth();
     const navigator = useNavigation<AppNavigationRoutesProps>();
     let empresas = user.empresaVOs;
     return (
@@ -34,7 +34,7 @@ export const TrocarEmpresa = () => {
                         style={{ width: '100%', marginTop: 30}}
                         contentContainerStyle={{ paddingVertical: 10, marginLeft: 30, alignContent: 'center' }}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={()=> console.log('Trocar empresa: ', item.codigo)}>
+                            <TouchableOpacity onPress={() => switchComp(item.codigo)}>
                                 <Card className="w-[90%] min-h-[40PX] justify-center bg-gray-100 rounded-2xl mb-4">
                                     <HStack className="gap-4 px-5 items-center">
                                         <Feather name="briefcase" size={22} color={"#075985"} />

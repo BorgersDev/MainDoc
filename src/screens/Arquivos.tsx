@@ -23,18 +23,67 @@ import { Center } from "@/components/ui/center";
 import { AppError } from "@utils/AppError";
 import { useToast } from "@/components/ui/toast";
 import { ToastMessage } from "@components/ToastMessage";
-
+import { useAuth } from "@hooks/useAuth";
+import { DepartamentoDTO } from "@dtos/DepartamentoDTO";
 export const Arquivos = () => {
+  const user = useAuth();
   const navigator = useNavigation<AppNavigationRoutesProps>();
-  const departamentos = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
-  const [selectedDepartment, setSelectedDepartment] = useState('RH')
+  const departamentoss = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
+  const [selectedDepartment, setSelectedDepartment] = useState('1')
   const toast = useToast();
+  const [ departamentos, setDepartamentos ] = useState<DepartamentoDTO>({} as DepartamentoDTO);
+  const testeDptos = {
+    "limitePorPagina": 10,
+    "paginaAtual": 1,
+    "dados": [
+      {
+        "codigo": 1,
+        "nome": "Contrato",
+        "departamento": "Jurídico",
+        "codigoDepartamento": 101,
+        "qtdDoc": 25
+      },
+      {
+        "codigo": 2,
+        "nome": "Relatório Financeiro",
+        "departamento": "Financeiro",
+        "codigoDepartamento": 102,
+        "qtdDoc": 15
+      },
+      {
+        "codigo": 3,
+        "nome": "Ficha de Funcionário",
+        "departamento": "Recursos Humanos",
+        "codigoDepartamento": 103,
+        "qtdDoc": 30
+      },
+      {
+        "codigo": 4,
+        "nome": "Orçamento de Obra",
+        "departamento": "Engenharia",
+        "codigoDepartamento": 104,
+        "qtdDoc": 12
+      },
+      {
+        "codigo": 5,
+        "nome": "Plano de Marketing",
+        "departamento": "Marketing",
+        "codigoDepartamento": 105,
+        "qtdDoc": 8
+      }
+    ]
+  }
   const fetchDepartamentos = async ( ) => {
     try {
-      const response = await api.get('/arquivo/listar/departamento/10/0')
-      console.log('DEPARTAMENTOS =>', response.data)
+      const response = await api.get('/arquivo/listar/departamento', {
+        headers: {
+          filtroBusca: ''
+        }
+      })
+      setDepartamentos(response.data.list)
+      setSelectedDepartment(response.data.list[0].codigoDepartamento)
+      console.log('DEPARTAMENTOS ===> ',departamentos)
     } catch (error) {
-      console.log(error)
       const isAppError = error instanceof AppError;
       const title =  "Não foi possível carregar os departamentos "
       toast.show({
@@ -60,8 +109,8 @@ export const Arquivos = () => {
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
       <Header GoBack={false} />
-      <FlatList data={departamentos} keyExtractor={(item) => item} renderItem={({ item }) => (
-        <Departamentos title={item} isActive={selectedDepartment.toLowerCase() === item.toLowerCase()} onPress={() => setSelectedDepartment(item)} />
+      <FlatList data={departamentos} keyExtractor={(item) => item.codigoDepartamento.toString()} renderItem={({ item }) => (
+        <Departamentos title={item.nome} qtdDoc={item.qtdDoc} isActive={selectedDepartment === item.codigoDepartamento} onPress={() => (setSelectedDepartment(item.codigoDepartamento), console.log(item.codigoDepartamento))} />
       )} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }} style={{ marginVertical: 10, maxHeight: 44, minHeight: 44 }} />
       <Card className="w-[100%] h-[7%] justify-center bg-blue-800 rounded-xs mb-1">
               <HStack className="gap-4  items-center justify-space-between">

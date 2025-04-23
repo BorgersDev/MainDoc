@@ -3,17 +3,19 @@ import { ComponentProps, useState } from "react";
 import { Button, TouchableOpacity } from "react-native";
 type Props = ComponentProps<typeof Button> & {
   title: string;
+  qtdDoc: number;
   isActive: boolean;
 };
 
-export const Departamentos = ({ title, isActive, ...rest }: Props) => {
+export const Departamentos = ({ title, qtdDoc, isActive, ...rest }: Props) => {
     const [isPressed, setPressed ] = useState(false);
   return (
     <TouchableOpacity
       activeOpacity={0.7} // Controls the fade effect
       style={{
-        minWidth: 96,
+        minWidth: 100,
         height: 35,
+        padding: 5,
         borderRadius: 8,
         justifyContent: "center",
         alignItems: "center",
@@ -24,8 +26,8 @@ export const Departamentos = ({ title, isActive, ...rest }: Props) => {
       }}
       {...rest}
     >
-      <Text className={`uppercase text-xs font-heading ${isActive ? "text-blue-950" : "text-gray200"}`}>
-        {title}
+      <Text className={` text-xs font-heading ${isActive ? "text-blue-950" : "text-gray200"}`}>
+        {title}({qtdDoc})
       </Text>
     </TouchableOpacity>
   );
