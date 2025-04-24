@@ -1,4 +1,4 @@
-export type DepartamentosResponse {
+export type TipoDocumentoDTO = {
     list: {
       codigoDepartamento: number;
       nome:               string;

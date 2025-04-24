@@ -14,11 +14,41 @@ import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
+import { api } from "@services/api";
 
 export const DocsPorTipo = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
-  const departamentos = ["Financeiro", "Logistica", "Diretoria", "RH", "Suporte"]
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
+
+
+  const fetchDocumentos= async ( ) => {
+    try {
+      const response = await api.get(`/arquivo/listar/tipoDocumento/${selectedDepartment}`, {
+        headers: {
+          filtroBusca: ''
+        }
+      })
+      setTipoDocumento(response.data.list[0].tipoDocumentoArquivoVOs)
+      console.log('TIPO DOCUMENTO ===> ',tipoDocumento)
+    } catch (error) {
+      console.log('ERROR ===> ',error)
+      const isAppError = error instanceof AppError;
+      const title =  "Não foi possível carregar os Tipos de Documento "
+      toast.show({
+              placement: "top",
+              render: ({ id }) => (
+                <ToastMessage
+                  id={id}
+                  title={title}
+                  onClose={() => toast.close(id)}
+                  action="error"
+                />
+              ),
+            });
+            
+    }
+  }
+
   let documentos = [
      "NOTA FISCAL",
     "ALVARÁ DE FUNCIONAMENTO", "BALANÇO PATRIMONIAL", "CERTIFICADO DIGITAL", "DECLARAÇÃO DE IMPOSTO", "ESCRITURA PÚBLICA",
