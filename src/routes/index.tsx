@@ -21,7 +21,6 @@ export const Routes = () => {
 
     const {isLoading} = useLoading();
 
-    console.log('USUÁRIO LOGADO =>', user)
 
     const theme = DefaultTheme
     theme.colors.background = gluestackUIConfig.tokens.colors.warmGray100
@@ -29,7 +28,7 @@ export const Routes = () => {
     if(isLoading) {
         return <Loading />
     }
-
+    console.log('USER ===> ',user)
     return (
         <Box className="flex-1 bg-gray-100">
             <NavigationContainer theme={theme} > 

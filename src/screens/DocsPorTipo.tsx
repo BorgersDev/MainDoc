@@ -14,11 +14,17 @@ import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
+import { useToast } from "@/components/ui/toast";
+import { ToastMessage } from "@components/ToastMessage";
 import { api } from "@services/api";
+import { DocumentosDTO } from "@dtos/DocumentosDTO";
+import { AppError } from "@utils/AppError";
 
 export const DocsPorTipo = () => {
+  const toast = useToast();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
+  const [ documentos, setDocumentos ] = useState<DocumentosDTO>({} as DocumentosDTO);
 
 
   const fetchDocumentos= async ( ) => {
@@ -28,8 +34,8 @@ export const DocsPorTipo = () => {
           filtroBusca: ''
         }
       })
-      setTipoDocumento(response.data.list[0].tipoDocumentoArquivoVOs)
-      console.log('TIPO DOCUMENTO ===> ',tipoDocumento)
+      setDocumentos(response.data)
+      console.log('DOCUMENTOS ===> ',documentos)
     } catch (error) {
       console.log('ERROR ===> ',error)
       const isAppError = error instanceof AppError;
@@ -49,7 +55,7 @@ export const DocsPorTipo = () => {
     }
   }
 
-  let documentos = [
+  let documentoss = [
      "NOTA FISCAL",
     "ALVARÁ DE FUNCIONAMENTO", "BALANÇO PATRIMONIAL", "CERTIFICADO DIGITAL", "DECLARAÇÃO DE IMPOSTO", "ESCRITURA PÚBLICA",
     "FICHA CADASTRAL", "GUIA DE RECOLHIMENTO", "HISTÓRICO EMPRESARIAL", "INVENTÁRIO PATRIMONIAL", "JUNTA COMERCIAL",
@@ -78,7 +84,7 @@ export const DocsPorTipo = () => {
               </HStack>
             </Card>
       <FlatList
-        data={documentos}
+        data={documentoss}
         keyExtractor={(item) => item}
         style={{ width: '100%'}}
         contentContainerStyle={{ paddingVertical: 10, marginLeft: 15, alignContent: 'center' }}

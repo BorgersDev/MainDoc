@@ -47,7 +47,6 @@ export const Arquivos = () => {
       })
       setDepartamentos(response.data.list)
       setSelectedDepartment(response.data.list[0].codigoDepartamento)
-      console.log('DEPARTAMENTOS ===> ',departamentos)
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title =  "Não foi possível carregar os departamentos "
@@ -73,9 +72,7 @@ export const Arquivos = () => {
         }
       })
       setTipoDocumento(response.data.list[0].tipoDocumentoArquivoVOs)
-      console.log('TIPO DOCUMENTO ===> ',tipoDocumento)
     } catch (error) {
-      console.log('ERROR ===> ',error)
       const isAppError = error instanceof AppError;
       const title =  "Não foi possível carregar os Tipos de Documento "
       toast.show({

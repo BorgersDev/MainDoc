@@ -31,14 +31,20 @@ export default function App() {
  
   return (
     <NavigationProvider>
-      <GluestackUIProvider >
+      <GluestackUIProvider>
         <LoadingContextProvider>
           <AuthContextProvider>
-              { isLoading ? <Loading /> : <Routes /> }
+            <Main />
           </AuthContextProvider>
         </LoadingContextProvider>
         <StatusBar style="auto" />
       </GluestackUIProvider>
     </NavigationProvider>
   );
+}
+
+function Main() {
+  const { isLoading } = useLoading();
+
+  return isLoading ? <Loading /> : <Routes />;
 }

@@ -3,9 +3,10 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { UserDTO } from "@dtos/UserDTO";
 import { api } from "@services/api";
 
-import { getAuthTokenStorage, removeAuthTokenStorage, saveAuthTokenStorage, saveCompanyTokenStorage, getAuthCompanyTokenStorage, saveAuthorization64Storage, getAuthorization64Storage } from "@storage/storageAuthToken";
+import { getAuthTokenStorage, removeAuthTokenStorage, saveAuthTokenStorage, saveCompanyTokenStorage, getAuthCompanyTokenStorage, saveAuthorization64Storage, getAuthorization64Storage, removeAuthCompanyTokenStorage, removeAuthorization64Storage } from "@storage/storageAuthToken";
 import { getUserStorage, removeUserStorage, saveUserStorage } from "@storage/storageUser";
 import { useLoading } from "@hooks/useLoading";
+import { set } from "@gluestack-style/react";
 
 export type AuthContextDataProps = {
     user: UserDTO;
@@ -14,6 +15,8 @@ export type AuthContextDataProps = {
     signOut: () => Promise<void>;
     switchComp: ( codigoEmpresa: number ) => Promise<void>;
     isLoadingUserStorageData: boolean;
+    empresaConfirmada: boolean;
+    setEmpresaConfirmada: (value: boolean) => void;
 }
 export const AuthContext = createContext<AuthContextDataProps>({} as AuthContextDataProps);
 
@@ -24,6 +27,7 @@ type AuthContextProviderProps = {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [ isLoadingUserStorageData, setIsLoadingUserStorageData ] = useState(true)
     const [ user, setUser] = useState<UserDTO>({} as UserDTO)
+    const [ empresaConfirmada, setEmpresaConfirmada ] = useState(false)
     const {setLoading} = useLoading();
 
 
@@ -62,7 +66,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
             });
             const basicAuthHeader = 'Basic ' + btoa(`${username}:${password}`)
             const { data } = response;
-            console.log("RESPONSE => ", response)
             if(data && data.tokenUsuario && data.tokenEmpresa && basicAuthHeader) {
                 await saveUserAndTokenStorage(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader );
                 await userAndTokenUpdate(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader);
@@ -87,7 +90,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
                 }
             });
             const { data } = response;
-            console.log("RESPONSE => ", response)
             if(data && data.tokenUsuario && data.tokenEmpresa && authorization64) {
                 await saveUserAndTokenStorage(data, data.tokenUsuario, data.tokenEmpresa, authorization64 );
                 await userAndTokenUpdate(data, data.tokenUsuario, data.tokenEmpresa, authorization64);
@@ -124,6 +126,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
             setUser({} as UserDTO);
             await removeUserStorage()
             await removeAuthTokenStorage();
+            await removeAuthCompanyTokenStorage();
+            await removeAuthorization64Storage();
+            setEmpresaConfirmada(false)
         } catch (error) {
             throw error
         } finally  {
@@ -131,16 +136,11 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         }
       }
 
-    //   const switchUserCompany = async (userData: UserDTO, token: string, companyCode: number) => {
-    //     try {
-    //         const { updatedCompany } = await api.get(`/usuario/trocarEmpresa/${companyCode}`)
-    //     }
-
       useEffect(() => {
         loadUserData();
       }, []);
     return (
-        <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData, signOut, switchComp }}>
+        <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData, signOut, switchComp, setEmpresaConfirmada, empresaConfirmada }}>
             {children}
         </AuthContext.Provider>
     );
