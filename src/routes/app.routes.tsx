@@ -10,7 +10,10 @@ type AppRoutes = {
     Arquivos: undefined;
     TrocarEmpresa: undefined;
     Upload: undefined;
-    DocsPorTipo: undefined;
+    DocsPorTipo: {
+        codigoDepartamento: number;
+        codigoTipoDocumento: number;
+      };
 };
 
 

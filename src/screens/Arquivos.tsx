@@ -132,7 +132,20 @@ export const Arquivos = () => {
                   <Text className="font-heading text-gray200 text-xs">{item.qtdDoc}</Text>
                 </Center>
                 <Center className="w-[33%]">
-                  <Button className="bg-blue-700 max-h-7 max-w-16" onPress={() => navigator.navigate('DocsPorTipo')}>
+                  <Button className="bg-blue-700 max-h-7 max-w-16" onPress={() => {
+                     const departamento = item.codigoDepartamento;
+                     const tipoDocumento = item.codigo;
+                   
+                     if (!departamento || !tipoDocumento) {
+                       console.log('Dados inválidos:', item);
+                       return;
+                     }
+                   
+                     navigator.navigate('DocsPorTipo', {
+                       codigoDepartamento: departamento,
+                       codigoTipoDocumento: tipoDocumento,
+                     });
+                  }}>
                     <Feather name="search" size={15} color={"#fff"} />
                   </Button>
                 </Center>
