@@ -6,7 +6,7 @@ import { DocsPorTipo } from "@screens/DocsPorTipo";
 import { useAuth } from "@hooks/useAuth";
 
 
-type AppRoutes = {
+export type AppRoutes = {
     Arquivos: undefined;
     TrocarEmpresa: undefined;
     Upload: undefined;

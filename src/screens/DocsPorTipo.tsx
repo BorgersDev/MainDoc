@@ -3,12 +3,12 @@ import { Header } from "@components/Header";
 import { DocumentCard } from "@components/DocumentCard";
 import { Fab, FabLabel, FabIcon } from '@/components/ui/fab';
 import { AddIcon } from "@/components/ui/icon";
-import { useNavigation } from "@react-navigation/native";
-import { AppNavigationRoutesProps } from "@routes/app.routes";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { AppNavigationRoutesProps, AppRoutes } from "@routes/app.routes";
 import { FlatList, TouchableOpacity } from "react-native";
 import { Departamentos } from "@components/Departamentos";
 import { Feather } from "@expo/vector-icons"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
@@ -20,22 +20,27 @@ import { api } from "@services/api";
 import { DocumentosDTO } from "@dtos/DocumentosDTO";
 import { AppError } from "@utils/AppError";
 
+type DocsPorTipoRouteProps = RouteProp<AppRoutes, 'DocsPorTipo'>;
+
 export const DocsPorTipo = () => {
+  const route = useRoute<DocsPorTipoRouteProps>();
   const toast = useToast();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
   const [ documentos, setDocumentos ] = useState<DocumentosDTO>({} as DocumentosDTO);
+  const codigoDepartamento = route.params.codigoDepartamento
+  const codigoTipoDocumento = route.params.codigoTipoDocumento
 
 
-  const fetchDocumentos= async ( ) => {
+  const fetchDocumentos= async () => {
     try {
-      const response = await api.get(`/arquivo/listar/tipoDocumento/${selectedDepartment}`, {
+      const response = await api.get(`/arquivo/listar/${codigoDepartamento}/${codigoTipoDocumento}/10/1`, {
         headers: {
           filtroBusca: ''
         }
       })
-      setDocumentos(response.data)
-      console.log('DOCUMENTOS ===> ',documentos)
+      console.log(response.data.list)
+      setDocumentos(response.data.list)
     } catch (error) {
       console.log('ERROR ===> ',error)
       const isAppError = error instanceof AppError;
@@ -53,20 +58,11 @@ export const DocsPorTipo = () => {
             });
             
     }
-  }
+  }   
 
-  let documentoss = [
-     "NOTA FISCAL",
-    "ALVARÁ DE FUNCIONAMENTO", "BALANÇO PATRIMONIAL", "CERTIFICADO DIGITAL", "DECLARAÇÃO DE IMPOSTO", "ESCRITURA PÚBLICA",
-    "FICHA CADASTRAL", "GUIA DE RECOLHIMENTO", "HISTÓRICO EMPRESARIAL", "INVENTÁRIO PATRIMONIAL", "JUNTA COMERCIAL",
-    "KITS DOCUMENTAIS", "LICENÇA AMBIENTAL", "MANDATO PROCURAÇÃO", "NORMAS REGULADORAS", "ORÇAMENTOS",
-    "PROCURAÇÃO PARTICULAR", "QUITAÇÃO DE DÉBITOS", "RECIBOS", "SIMPLES NACIONAL", "TERMO DE RESCISÃO",
-    "UNIFORMIZAÇÃO DE DOCUMENTOS", "VISTORIA IMOBILIÁRIA", "XEROX AUTENTICADA", "YOUTUBE CONTRATO PUBLICIDADE", "ZONA REGULAMENTADA",
-    "ATESTADO DE ANTECEDENTES", "BOLETIM DE OCORRÊNCIA", "CERTIFICADO DE CONCLUSÃO", "DIPLOMA ACADÊMICO",
-    "EXTRATO BANCÁRIO", "FATURAMENTO MENSAL", "GUIA DE TRIBUTOS", "HABILITAÇÃO PROFISSIONAL", "IDENTIDADE FUNCIONAL",
-    "JURISPRUDÊNCIA TRABALHISTA", "KITS REGULAMENTARES", "LAUDO TÉCNICO", "MINUTA CONTRATUAL", "NOTIFICAÇÃO EXTRAJUDICIAL",
-    "OPÇÃO PELO SIMPLES", "PROTOCOLO DE DOCUMENTOS", "REQUERIMENTO ADMINISTRATIVO", "SENTENÇA JUDICIAL"
-  ];    
+  useEffect(() => {
+    fetchDocumentos()
+  }, [])
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
       <Header GoBack={true} />
@@ -84,18 +80,18 @@ export const DocsPorTipo = () => {
               </HStack>
             </Card>
       <FlatList
-        data={documentoss}
-        keyExtractor={(item) => item}
+        data={documentos}
+        keyExtractor={(item) => item.codigo.toString()}
         style={{ width: '100%'}}
         contentContainerStyle={{ paddingVertical: 10, marginLeft: 15, alignContent: 'center' }}
         renderItem={({ item }) => (
             <Card className="w-[97%] min-h-[60PX] justify-center bg-gray-100 rounded-md mb-4">
               <HStack className="gap-4  items-center justify-space-between">
                 <Center className="w-[10%]">
-                  <Text className="font-heading text-gray200 text-xs">3</Text>
+                  <Text className="font-heading text-gray200 text-xs">{item.codigo}</Text>
                 </Center>
                 <Center className="w-[45%] justify-start">
-                  <Text className="font-heading text-gray200 text-xs">{item}</Text>
+                  <Text className="font-heading text-gray200 text-xs">{item.nome}</Text>
                 </Center>
                 <Center className="w-[45%] ml-2">
                     <HStack className="gap-4">
