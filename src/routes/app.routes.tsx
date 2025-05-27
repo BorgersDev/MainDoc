@@ -4,6 +4,7 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-na
 import { Upload } from "@screens/Upload";
 import { DocsPorTipo } from "@screens/DocsPorTipo";
 import { useAuth } from "@hooks/useAuth";
+import { VisualizarDocumento } from "@screens/VisualizarDocumento";
 
 
 export type AppRoutes = {
@@ -14,6 +15,7 @@ export type AppRoutes = {
         codigoDepartamento: number;
         codigoTipoDocumento: number;
       };
+    VisualizarDocumento: { url: string, name: string };
 };
 
 
@@ -33,6 +35,7 @@ export const AppRoutes = ( ) => {
             <Screen name="TrocarEmpresa" component={TrocarEmpresa} />
             <Screen name="Upload" component={Upload} />
             <Screen name="DocsPorTipo" component={DocsPorTipo} />
+            <Screen name="VisualizarDocumento" component={VisualizarDocumento} />
         </Navigator>
     );
 }

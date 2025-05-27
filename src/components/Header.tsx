@@ -21,9 +21,11 @@ import { useState } from "react";
 
 type HeaderProps = {
   GoBack: boolean;
+  InputValue: string;
+  setInputValue?: (value: string) => void;
 }
 
-export const Header = ({GoBack}: HeaderProps) => {
+export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
   const { signOut, user } = useAuth();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [ goback, setGoBack ] = useState(GoBack);
@@ -77,9 +79,13 @@ export const Header = ({GoBack}: HeaderProps) => {
           <AccordionContent className="mt-0 mb-[-10px] bg-gray-100">
             <Input className="bg-gray-200 justify-between items-center mx-[6%] mt-2 mb-3 h-8 rounded-lg">
               <InputField
-                placeholder="Buscar arquivo"
+                placeholder="Buscar"
                 placeholderTextColor="gray-400"
-                className="text-sm text-gray-300"
+                className="text-sm text-gray-800"
+                value={InputValue}
+                onChangeText={setInputValue}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               <HStack className="mx-2 items-center">
                 <TouchableOpacity onPress={() => console.log("piru1")}>

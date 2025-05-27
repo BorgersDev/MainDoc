@@ -35,7 +35,8 @@ export const Arquivos = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('1')
   const toast = useToast();
   const [ departamentos, setDepartamentos ] = useState<DepartamentoDTO>({} as DepartamentoDTO);
-  const [ tipoDocumento, setTipoDocumento ] = useState<TipoDocumentoDTO>({} as TipoDocumentoDTO); 
+  const [tipoDocumento, setTipoDocumento] = useState<TipoDocumentoDTO[]>([]);
+  const [ searchQuery, setSearchQuery ] = useState('');
 
  
   const fetchDepartamentos = async ( ) => {
@@ -68,11 +69,19 @@ export const Arquivos = () => {
     try {
       const response = await api.get(`/arquivo/listar/tipoDocumento/${selectedDepartment}`, {
         headers: {
-          filtroBusca: ''
+          filtroBusca: searchQuery
         }
       })
+
+      const list = response.data.list;
+      if(list.length === 0) {
+        setTipoDocumento([]);
+        return;
+      }
+
       setTipoDocumento(response.data.list[0].tipoDocumentoArquivoVOs)
     } catch (error) {
+      console.log(error)
       const isAppError = error instanceof AppError;
       const title =  "Não foi possível carregar os Tipos de Documento "
       toast.show({
@@ -96,10 +105,16 @@ export const Arquivos = () => {
   useEffect(() => {
     fetchTipoDocumento()
   }, [selectedDepartment])
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchTipoDocumento();
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+    }, [searchQuery]);
 
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
-      <Header GoBack={false} />
+      <Header GoBack={false} InputValue={searchQuery} setInputValue={setSearchQuery} />
       <FlatList data={departamentos} keyExtractor={(item) => item.codigoDepartamento.toString()} renderItem={({ item }) => (
         <Departamentos title={item.nome} qtdDoc={item.qtdDoc} isActive={selectedDepartment === item.codigoDepartamento} onPress={() => (setSelectedDepartment(item.codigoDepartamento))} />
       )} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }} style={{ marginVertical: 10, maxHeight: 44, minHeight: 44 }} />
@@ -116,7 +131,7 @@ export const Arquivos = () => {
                 </Center>
               </HStack>
             </Card>
-            { !tipoDocumento ? <Loading /> : 
+            { tipoDocumento.length === 0  ? <Text className="text-gray-500 text-center mt-4">Nenhum tipo de documento encontrado.</Text> : 
         <FlatList
         data={tipoDocumento}
         keyExtractor={(item) => item.codigo.toString()}

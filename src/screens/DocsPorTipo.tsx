@@ -17,8 +17,12 @@ import { Center } from "@/components/ui/center";
 import { useToast } from "@/components/ui/toast";
 import { ToastMessage } from "@components/ToastMessage";
 import { api } from "@services/api";
-import { DocumentosDTO } from "@dtos/DocumentosDTO";
 import { AppError } from "@utils/AppError";
+import { Loading } from "@components/Loading";
+import { DocumentoDTO } from "@dtos/DocumentoDTO";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { set } from "@gluestack-style/react";
 
 type DocsPorTipoRouteProps = RouteProp<AppRoutes, 'DocsPorTipo'>;
 
@@ -27,22 +31,46 @@ export const DocsPorTipo = () => {
   const toast = useToast();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [selectedDepartment, setSelectedDepartment] = useState('RH')
-  const [ documentos, setDocumentos ] = useState<DocumentosDTO>({} as DocumentosDTO);
+  const [documentos, setDocumentos] = useState<DocumentoDTO[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const codigoDepartamento = route.params.codigoDepartamento
   const codigoTipoDocumento = route.params.codigoTipoDocumento
+  const [ searchQuery, setSearchQuery ] = useState('');
+  const [ isLoading, setIsLoading ] = useState(false);
 
 
-  const fetchDocumentos= async () => {
+  const fetchDocumentos= async (isLoadMore = false) => {
+    if ( isLoading ) return;
+
     try {
-      const response = await api.get(`/arquivo/listar/${codigoDepartamento}/${codigoTipoDocumento}/10/1`, {
+      setIsLoading(true);
+
+      const currentPage = isLoadMore ? page + 1 : 1;
+
+
+      const response = await api.get(`/arquivo/listar/${codigoDepartamento}/${codigoTipoDocumento}/10/${currentPage}`, {
         headers: {
-          filtroBusca: ''
+          filtroBusca: searchQuery
         }
       })
-      console.log(response.data.list)
-      setDocumentos(response.data.list)
+      const data = response.data.list
+    
+      if (isLoadMore) {
+        setDocumentos((prev) => [...prev, ...data]);
+        setPage(currentPage);
+      } else {
+        setDocumentos(data);
+        setPage(1);
+      }
+
+      if(data.length < 10) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+
     } catch (error) {
-      console.log('ERROR ===> ',error)
       const isAppError = error instanceof AppError;
       const title =  "Não foi possível carregar os Tipos de Documento "
       toast.show({
@@ -57,15 +85,116 @@ export const DocsPorTipo = () => {
               ),
             });
             
+    } finally {
+      setIsLoading(false);
     }
   }   
+  const handleVisualizar = async (id: number, name: string) => {
+    try {
+      const response = await api.get(`/arquivo/url/${id}`, {
+        headers: {
+          filtroBusca: ''
+        }
+      })
+      const url = response.data.url;
+      navigator.navigate('VisualizarDocumento', { url, name });
+      
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title =  "Não foi possível visualizar o documento "
+      toast.show({
+              placement: "top",
+              render: ({ id }) => (
+                <ToastMessage
+                  id={id}
+                  title={title}
+                  onClose={() => toast.close(id)}
+                  action="error"
+                />
+              ),
+            });
+      
+    }
+  }
+
+  const handleDownload = async (id: number, fileName: string, extensao: string) => {
+    try {
+      const response = await api.get(`/arquivo/download/${id}`, {
+        headers: {
+          filtroBusca: ''
+        }
+      });
+  
+      const base64 = response.data.file as string;
+      if (!base64) {
+        toast.show({
+          placement: 'top',
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              title={'Arquivo inválido para download.'}
+              onClose={() => toast.close(id)}
+              action="error"
+            />
+          )
+        });
+        return;
+      }
+  
+      const fileUri = `${FileSystem.documentDirectory}${fileName}.${extensao}`;
+  
+      await FileSystem.writeAsStringAsync(fileUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+  
+      const canShare = await Sharing.isAvailableAsync();
+  
+      if (canShare) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        toast.show({
+          placement: 'top',
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              title={'Arquivo salvo no dispositivo.'}
+              onClose={() => toast.close(id)}
+              action="success"
+            />
+          )
+        });
+      }
+  
+    } catch (error) {
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            title={'Não foi possível fazer o download do arquivo.'}
+            onClose={() => toast.close(id)}
+            action="error"
+          />
+        )
+      });
+    }
+  };
 
   useEffect(() => {
-    fetchDocumentos()
-  }, [])
+    setDocumentos([])
+    setPage(1)
+    setHasMore(true)
+    fetchDocumentos();
+  }, [codigoTipoDocumento, codigoDepartamento, searchQuery])
+  // useEffect(() => {
+  //   setDocumentos([]);
+  //   setPage(1);
+  //   setHasMore(true);
+  // }, [codigoTipoDocumento, codigoDepartamento, searchQuery]);
+
   return (
     <VStack className="flex-1 bg-gray-200 mt-[14%]">
-      <Header GoBack={true} />
+      <Header GoBack={true} InputValue={searchQuery} setInputValue={setSearchQuery} />
       <Card className="w-[100%] h-[7%] justify-center bg-blue-800 rounded-xs mb-1">
               <HStack className="gap-4 ml-5  items-center justify-space-between">
                 <Center className="w-[10%]">
@@ -79,7 +208,8 @@ export const DocsPorTipo = () => {
                 </Center>
               </HStack>
             </Card>
-      <FlatList
+      { documentos.length === 0 ? <Text className="text-gray-500 text-center mt-4">Nenhum documento encontrado.</Text> :
+        <FlatList
         data={documentos}
         keyExtractor={(item) => item.codigo.toString()}
         style={{ width: '100%'}}
@@ -95,10 +225,10 @@ export const DocsPorTipo = () => {
                 </Center>
                 <Center className="w-[45%] ml-2">
                     <HStack className="gap-4">
-                            <TouchableOpacity>
-                                <Feather name="eye" size={20} color={"#1e40af"} />
+                            <TouchableOpacity disabled={!item.apresentarPreview} onPress={() => handleVisualizar(item.codigo, item.nome)}>
+                                <Feather name="eye" size={20} color={item.apresentarPreview ? "#1e40af" : "#9ca3af" } />
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleDownload(item.codigo, item.nome.replace('.pdf', ''), item.extensao)}>
                                 <Feather name="download" size={20} color={"#1e40af"} />
                             </TouchableOpacity>
                     </HStack>
@@ -106,7 +236,14 @@ export const DocsPorTipo = () => {
               </HStack>
             </Card>
         )}
-      />
+        onEndReached={() => {
+          if (hasMore && !isLoading) {
+            fetchDocumentos(true);
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={hasMore ? <Loading /> : null}
+      />}
       <Fab onPress={() => navigator.navigate('Upload')} className=" w-[14%] h-[7%] bg-white active:bg-gray-100 shadow-gray-200 shadow-md mr-3 mb-12 " placement="bottom right" >
         <FabIcon as={AddIcon} className="color-gray-950" />
       </Fab>
