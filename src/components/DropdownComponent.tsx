@@ -5,20 +5,14 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 
  type DropdownComponentProps = {
   name: string;
+  data: Array<{ "codigo": number, "nome": string }>;
+  fetch?: () => Promise<void> | void;
+  onChange?: (item: { codigo: number; nome: string }) => void;
  }
 
-const data = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
 
-const DropdownComponent = ({name}: DropdownComponentProps) => {
+
+const DropdownComponent = ({name, data, fetch, onChange}: DropdownComponentProps) => {
   const [value, setValue] = useState(null);
 
   return (
@@ -28,15 +22,21 @@ const DropdownComponent = ({name}: DropdownComponentProps) => {
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
       data={data}
+      onFocus={() => {
+        if (fetch) {
+          fetch();
+        }
+      }}
       search
       maxHeight={300}
-      labelField="label"
-      valueField="value"
+      labelField="nome"
+      valueField="codigo"
       placeholder={name}
       searchPlaceholder="Search..."
       value={value}
       onChange={item => {
-        setValue(item.value);
+        setValue(item.codigo);
+        if(onChange) onChange(item)
       }}
       
     />

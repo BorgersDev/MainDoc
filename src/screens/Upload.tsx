@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
@@ -11,10 +11,21 @@ import { AppNavigationRoutesProps } from "@routes/app.routes";
 import { Box } from "@/components/ui/box";
 import DropdownComponent from "@components/DropdownComponent";
 import * as DocumentPicker from "expo-document-picker";
+import { AppError } from "@utils/AppError";
+import { useToast } from "@/components/ui/toast";
+import { ToastMessage } from "@components/ToastMessage";
+import { api } from "@services/api";
+
+
 
 export const Upload = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [selectedFile, setSelectedFile] = useState(null);
+  const toast = useToast();
+  const [departamentos, setDepartamentos] = useState([]);
+  const [ selectedDepartment, setSelectedDepartment ] = useState<number | null>(null);
+  const [tipoDocumento, setTipoDocumento] = useState([]);
+
 
   const pickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -26,6 +37,64 @@ export const Upload = () => {
       setSelectedFile(result.assets[0]); // Store selected file
     }
   };
+  const datass = [
+  { "codigo": 1, "nome": 'Teste 01' },
+  { "codigo": 2, "nome": 'Teste 02' },
+];
+
+  const fetchDepartamentos = async () => {
+    try {
+      const response = await api.get(`/departamento/listar`);
+      const data = response.data
+      setDepartamentos(data);
+
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = "Não foi possível carregar os departamentos";
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            title={title}
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+      
+    }
+  }
+  const handleDepartamentoChange = (item: { codigo: number; nome: string }) => {
+  setSelectedDepartment(item.codigo);
+  fetchTipoDocumento(item.codigo);
+};
+  const fetchTipoDocumento = async () => {
+    if (!selectedDepartment) return;
+    try {
+      const response = await api.get(`/tipoDocumento/listar/${selectedDepartment}`);
+      const data = response.data;
+      setTipoDocumento(data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = "Não foi possível carregar os tipos de documento";
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            title={title}
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+      
+    }
+  }
+
+useEffect(() => {
+  fetchTipoDocumento();
+}, [selectedDepartment]);
+
 
   return (
     <SafeAreaView className="flex-1 bg-gray-200">
@@ -49,14 +118,14 @@ export const Upload = () => {
               shadowRadius: 10,
             }}
           >
-            <HStack className="w-full gap-2">
-              <DropdownComponent name="Departamento" />
-              <DropdownComponent name="Tipo documento" />
-            </HStack>
+            <VStack className=" flex-1 w-full gap-2">
+              <DropdownComponent name="Departamento" data={departamentos} fetch={fetchDepartamentos} onChange={(item) => setSelectedDepartment(item.codigo)} />
+              <DropdownComponent name="Tipo documento" data={tipoDocumento} fetch={fetchTipoDocumento} />
+            </VStack>
 
             <VStack className=" flex-1 w-full justify-center items-center">
             
-            {!selectedFile ? (
+            {/* {!selectedFile ? (
             <TouchableOpacity className="w-[90%] flex-1" onPress={pickDocument}>
               <Box className="justify-center items-center flex-1 border-2 border-dashed border-blueGray-400 rounded-2xl p-4">
                 <Feather name="upload" size={30} color={"#075985"} />
@@ -68,7 +137,7 @@ export const Upload = () => {
                 <Feather name="file" size={22} color={"#075985"} />
                 <Text className="ml-2 text-gray-700">{selectedFile.name}</Text>
               </Box>
-            )}
+            )} */}
             </VStack>
           </Box>
 
