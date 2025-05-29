@@ -26,16 +26,20 @@ const { Navigator, Screen } = createNativeStackNavigator<AppRoutes>();
 
 export const AppRoutes = ( ) => {
     const {empresaConfirmada} = useAuth();
-    return (
-        <Navigator 
-        initialRouteName={empresaConfirmada ? 'Arquivos' : 'TrocarEmpresa'}
-        screenOptions={{headerShown: false, }}
-        >
-            <Screen name="Arquivos" component={Arquivos} />
-            <Screen name="TrocarEmpresa" component={TrocarEmpresa} />
-            <Screen name="Upload" component={Upload} />
-            <Screen name="DocsPorTipo" component={DocsPorTipo} />
-            <Screen name="VisualizarDocumento" component={VisualizarDocumento} />
-        </Navigator>
-    );
-}
+   
+  return (
+    <Navigator screenOptions={{ headerShown: false }}>
+      {!empresaConfirmada ? (
+        <Screen name="TrocarEmpresa" component={TrocarEmpresa} />
+      ) : (
+        <>
+          <Screen name="Arquivos" component={Arquivos} />
+          <Screen name="Upload" component={Upload} />
+          <Screen name="DocsPorTipo" component={DocsPorTipo} />
+          <Screen name="VisualizarDocumento" component={VisualizarDocumento} />
+          <Screen name="TrocarEmpresa" component={TrocarEmpresa} />
+        </>
+      )}
+    </Navigator>
+  );
+};

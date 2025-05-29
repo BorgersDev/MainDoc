@@ -17,6 +17,7 @@ export type AuthContextDataProps = {
     isLoadingUserStorageData: boolean;
     empresaConfirmada: boolean;
     setEmpresaConfirmada: (value: boolean) => void;
+    umaEmpresa: boolean;
 }
 export const AuthContext = createContext<AuthContextDataProps>({} as AuthContextDataProps);
 
@@ -28,6 +29,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [ isLoadingUserStorageData, setIsLoadingUserStorageData ] = useState(true)
     const [ user, setUser] = useState<UserDTO>({} as UserDTO)
     const [ empresaConfirmada, setEmpresaConfirmada ] = useState(false)
+    const [ umaEmpresa, setUmaEmpresa ] = useState(false);
     const {setLoading} = useLoading();
 
 
@@ -56,27 +58,35 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
     }
 
-      const signIn = async (username: string, password: string ) => {
-        try {
-            const response = await api.get('/usuario/login', {
-                auth: {
-                    username: username,
-                    password: password
-                }
-            });
-            const basicAuthHeader = 'Basic ' + btoa(`${username}:${password}`)
-            const { data } = response;
-            if(data && data.tokenUsuario && data.tokenEmpresa && basicAuthHeader) {
-                await saveUserAndTokenStorage(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader );
-                await userAndTokenUpdate(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader);
-            }
-        } catch (error) {
-            throw error;
-        } finally { 
-            setLoading(false);
-        }
-        
+      const signIn = async (username: string, password: string) => {
+  try {
+    const response = await api.get('/usuario/login', {
+      auth: {
+        username: username,
+        password: password,
+      },
+    });
+
+    const basicAuthHeader = 'Basic ' + btoa(`${username}:${password}`);
+    const { data } = response;
+
+    if (data && data.tokenUsuario && data.tokenEmpresa && basicAuthHeader) {
+      await saveUserAndTokenStorage(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader);
+      await userAndTokenUpdate(data, data.tokenUsuario, data.tokenEmpresa, basicAuthHeader);
+
+      if (data.empresaVOs.length === 1) {
+        setUmaEmpresa(true);
+        const unicaEmpresa = data.empresaVOs[0].codigo;
+        await switchComp(unicaEmpresa);
+        setEmpresaConfirmada(true);
       }
+    }
+  } catch (error) {
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
        
       const switchComp = async ( codigoEmpresa: number ) => {
         try {
@@ -98,27 +108,38 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
             throw error;
         } finally { 
             setLoading(false);
+            setEmpresaConfirmada(true);
         }
         
       }
 
-      const loadUserData = async () => {
-        try {
-            setLoading(true)
-            const userLogged = await getUserStorage();
-            const token = await getAuthTokenStorage();
-            const companyToken = await getAuthCompanyTokenStorage();
-            const authorization64 = await getAuthorization64Storage();
+     const loadUserData = async () => {
+  try {
+    setLoading(true);
+    const userLogged = await getUserStorage();
+    const token = await getAuthTokenStorage();
+    const companyToken = await getAuthCompanyTokenStorage();
+    const authorization64 = await getAuthorization64Storage();
 
-            if (token && userLogged && companyToken && authorization64 ) {
-                 await userAndTokenUpdate(userLogged, token, companyToken, authorization64) 
-            }
-        } catch (error) {
-            throw error;
-        } finally {
-            setLoading(false)
-        }
+    if (token && userLogged && companyToken && authorization64) {
+      await userAndTokenUpdate(userLogged, token, companyToken, authorization64);
+
+      if (userLogged.empresaVOs.length === 1) {
+        const unicaEmpresa = userLogged.empresaVOs[0].codigo;
+
+        await switchComp(unicaEmpresa);
+        setEmpresaConfirmada(true);
       }
+      if (userLogged.empresaVOs.length > 1) {
+        setUmaEmpresa(false);
+      }
+    }
+  } catch (error) {
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
       const signOut = async () => {
         try {
@@ -140,7 +161,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         loadUserData();
       }, []);
     return (
-        <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData, signOut, switchComp, setEmpresaConfirmada, empresaConfirmada }}>
+        <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData, signOut, switchComp, setEmpresaConfirmada, empresaConfirmada, umaEmpresa }}>
             {children}
         </AuthContext.Provider>
     );

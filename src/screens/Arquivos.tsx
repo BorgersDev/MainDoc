@@ -75,7 +75,7 @@ export const Arquivos = () => {
 
       const list = response.data.list;
       if(list.length === 0) {
-        setTipoDocumento([]);
+        setTipoDocumento([]); 
         return;
       }
 

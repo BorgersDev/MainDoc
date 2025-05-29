@@ -10,6 +10,7 @@ type PopupMenuProps = {
         icon: string; 
         action: () => void;
     }>;
+    umaEmpresa?: boolean;
 }
 
 export const PopupMenu = ({items}: PopupMenuProps) => {

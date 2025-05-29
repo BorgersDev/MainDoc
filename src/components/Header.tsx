@@ -26,10 +26,10 @@ type HeaderProps = {
 }
 
 export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
-  const { signOut, user } = useAuth();
+  const { signOut, user, umaEmpresa } = useAuth();
   const navigator = useNavigation<AppNavigationRoutesProps>();
   const [ goback, setGoBack ] = useState(GoBack);
-
+ const setPopMenuItens = () =>{}
   return (
     <VStack>
       <Accordion type="multiple" className="shadow-transparent">
@@ -51,7 +51,19 @@ export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
                   <Text>{user.nomeEmpresa}</Text>
                 </VStack>
               </HStack>
-              <PopupMenu
+              {
+                umaEmpresa ? (
+                  <PopupMenu
+                items={[
+                  {
+                    title: "Logout",
+                    icon: "log-out",
+                    action: () => signOut(),
+                  },
+                ].filter(item => user.empresaVOs|| item.title !== "Trocar de empresa")}
+              />
+                ) : (
+                  <PopupMenu
                 items={[
                   {
                     title: "Trocar de empresa",
@@ -65,6 +77,9 @@ export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
                   },
                 ].filter(item => user.empresaVOs|| item.title !== "Trocar de empresa")}
               />
+                )
+
+              }
             </HStack>
             <HStack className="ml-[-4px] w-[30%]">
               <AccordionTrigger className="bg-gray-100">
