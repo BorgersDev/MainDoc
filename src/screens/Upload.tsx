@@ -91,6 +91,29 @@ export const Upload = () => {
     }
   }
 
+  const fetchIndicesPorTipoDocumento = async (tipoDocumentoId: number) => {
+    try {
+      const response = await api.get(`/tipoDocumento/obter/${tipoDocumentoId}`);
+      const data = response.data;
+      console.log("Indices do tipo de documento:", data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = "Não foi possível carregar os índices do tipo de documento";
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            title={title}
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+      
+    }
+    
+  }
+
 useEffect(() => {
   fetchTipoDocumento();
 }, [selectedDepartment]);
@@ -120,7 +143,7 @@ useEffect(() => {
           >
             <VStack className=" flex-1 w-full gap-2">
               <DropdownComponent name="Departamento" data={departamentos} fetch={fetchDepartamentos} onChange={(item) => setSelectedDepartment(item.codigo)} />
-              <DropdownComponent name="Tipo documento" data={tipoDocumento} fetch={fetchTipoDocumento} />
+              <DropdownComponent name="Tipo documento" data={tipoDocumento} fetch={fetchTipoDocumento} onChange={(item) => fetchIndicesPorTipoDocumento(item.codigo)} />
             </VStack>
 
             <VStack className=" flex-1 w-full justify-center items-center">
