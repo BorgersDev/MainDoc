@@ -3,7 +3,7 @@ import { ButtonSpinner, Button as GluestackButton } from "@/components/ui/button
 import { ComponentProps } from "react";
 
 type Props = ComponentProps<typeof GluestackButton> & {
-  title: string;
+  title?: string;
   variant?: "dark" | "clear";
   isLoading?: boolean;
 };

@@ -5,7 +5,7 @@ import { AppNavigationRoutesProps, AppRoutes } from "@routes/app.routes";
 import { VStack } from "@/components/ui/vstack";
 import { Header } from "@components/Header";
 import { HStack } from "@/components/ui/hstack";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, ScrollView, Image } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Feather } from "@expo/vector-icons";
 
@@ -15,30 +15,49 @@ export const VisualizarDocumento = () => {
   const route = useRoute<VisualizarDocumentoRouteProp>();
   const navigator = useNavigation<AppNavigationRoutesProps>();
 
-  const { url, name } = route.params;
+  const { name } = route.params;
+  const isImageList = "images" in route.params;
+  const isPDF = "url" in route.params;
 
   return (
-    <VStack className="flex-1  mt-[14%]">
-      <HStack className=" pl-2.5  gap-18 items-center justify-between h-[7%] w-[80%]">
+    <VStack className="flex-1 mt-[14%]">
+      <HStack className="pl-2.5 gap-18 items-center justify-between h-[7%] w-[80%]">
         <TouchableOpacity onPress={() => navigator.goBack()}>
-          <HStack className=" gap-1 items-center">
-            <Feather
-              className=""
-              name="arrow-left"
-              size={22}
-              color="gray-300"
-            />
+          <HStack className="gap-1 items-center">
+            <Feather name="arrow-left" size={22} color="gray" />
             <Text className="font-heading text-gray-950">Voltar</Text>
           </HStack>
         </TouchableOpacity>
-
         <VStack>
           <Text className="font-heading">{name}</Text>
         </VStack>
       </HStack>
       <HStack className="bg-white h-[5%]" />
 
-      <WebView  source={{ uri: url }} style={{ flex: 1 }} startInLoadingState />
+      {isPDF && (
+        <WebView
+          source={{ uri: (route.params as { url: string }).url }}
+          style={{ flex: 1 }}
+          startInLoadingState
+        />
+      )}
+
+      {isImageList && (
+        <ScrollView contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
+          {(route.params as { images: { uri: string }[] }).images.map((img, index) => (
+            <Image
+              key={index}
+              source={{ uri: img.uri }}
+              style={{
+                width: "100%",
+                height: 400,
+                marginBottom: 20,
+                resizeMode: "contain",
+              }}
+            />
+          ))}
+        </ScrollView>
+      )}
     </VStack>
   );
 };
