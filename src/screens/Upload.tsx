@@ -15,32 +15,72 @@ import { AppError } from "@utils/AppError";
 import { useToast } from "@/components/ui/toast";
 import { ToastMessage } from "@components/ToastMessage";
 import { api } from "@services/api";
+import { Alert, Platform } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 
 
 export const Upload = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
   const toast = useToast();
   const [departamentos, setDepartamentos] = useState([]);
   const [ selectedDepartment, setSelectedDepartment ] = useState<number | null>(null);
   const [tipoDocumento, setTipoDocumento] = useState([]);
 
+  const openFileOptions = () => {
+    Alert.alert( 'Selecionar arquivo', 'Escolha a origem do documento', [
+      {
+        text: 'Digitalizar',
+        onPress: pickFromCamera,
+      },
+      {
+        text: 'Fototeca',
+        onPress: pickFromGallery,
+      },
+      {
+        text: 'Arquivos',
+        onPress: pickFromFiles,
+      },
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+    ]);
+  }
+  const pickFromCamera = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      base64: true,
+    });
 
-  const pickDocument = async () => {
+    if (!result.canceled) {
+      const image = result.assets[0];
+      setSelectedFile(image)
+    }
+  };
+
+  const pickFromGallery = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true, 
+      base64: true,
+    });
+    if (!result.canceled) {
+      const files = result.assets;
+      setSelectedFile(files);
+    }
+  }
+  const pickFromFiles = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "*/*",
       copyToCacheDirectory: true,
     });
-
-    if (!result.canceled) {
-      setSelectedFile(result.assets[0]); // Store selected file
+    if(!result.canceled) {
+      const file = result.assets[0];
+      setSelectedFile(file);
     }
-  };
-  const datass = [
-  { "codigo": 1, "nome": 'Teste 01' },
-  { "codigo": 2, "nome": 'Teste 02' },
-];
+  }
 
   const fetchDepartamentos = async () => {
     try {
