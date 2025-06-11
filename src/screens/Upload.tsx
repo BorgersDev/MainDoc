@@ -69,7 +69,6 @@ export const Upload = () => {
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      base64: true,
       quality: 1,
     });
 
@@ -84,7 +83,6 @@ export const Upload = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsMultipleSelection: true,
-      base64: true,
     });
     if (!result.canceled) {
       setSelectedFile(result.assets);
@@ -103,31 +101,35 @@ export const Upload = () => {
     }
   };
 
-  const createPdfFromImages = async (images: { uri: string; mimeType?: string }[]) => {
-  const pdfDoc = await PDFDocument.create();
+  const createPdfFromImages = async (
+    images: { uri: string; mimeType?: string }[]
+  ) => {
+    const pdfDoc = await PDFDocument.create();
 
-  for (const img of images) {
-    const response = await fetch(img.uri);
-    const buffer = await response.arrayBuffer();
+    for (const img of images) {
+      const base64 = await FileSystem.readAsStringAsync(img.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
-    let embeddedImage;
-    if (img.mimeType?.includes("png") || img.uri.toLowerCase().endsWith(".png")) {
-      embeddedImage = await pdfDoc.embedPng(buffer);
-    } else {
-      embeddedImage = await pdfDoc.embedJpg(buffer);
+      let embeddedImage;
+      if (img.mimeType?.includes("png") || img.uri.toLowerCase().endsWith(".png")) {
+        embeddedImage = await pdfDoc.embedPng(buffer);
+      } else {
+        embeddedImage = await pdfDoc.embedJpg(buffer);
+      }
+
+      const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
+      page.drawImage(embeddedImage, {
+        x: 0,
+        y: 0,
+        width: embeddedImage.width,
+        height: embeddedImage.height,
+      });
     }
 
-    const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
-    page.drawImage(embeddedImage, {
-      x: 0,
-      y: 0,
-      width: embeddedImage.width,
-      height: embeddedImage.height,
-    });
-  }
-
-  return await pdfDoc.save();
-};
+    return await pdfDoc.save();
+  };
 
   const getBase64FromBytes = (bytes: Uint8Array): string => {
     const binary = String.fromCharCode(...bytes);
@@ -175,9 +177,10 @@ const enviarArquivo = async () => {
     } else if (selectedFile) {
       console.log("📁 Lendo arquivo único (pdf, imagem, vídeo, áudio...)");
       try {
-        const response = await fetch(selectedFile.uri);
-        const buffer = await response.arrayBuffer();
-        const uint8Array = new Uint8Array(buffer);
+        const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        const uint8Array = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
         // Se for imagem, converte para PDF
         if (selectedFile.mimeType?.includes("image")) {
