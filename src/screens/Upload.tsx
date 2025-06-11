@@ -27,6 +27,7 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import * as FileSystem from "expo-file-system";
+import { Buffer } from "buffer";
 
 
 export const Upload = () => {
@@ -130,8 +131,7 @@ export const Upload = () => {
 };
 
   const getBase64FromBytes = (bytes: Uint8Array): string => {
-    const binary = String.fromCharCode(...bytes);
-    return btoa(binary);
+    return Buffer.from(bytes).toString("base64");
   };
 
 const enviarArquivo = async () => {
@@ -187,7 +187,7 @@ const enviarArquivo = async () => {
           extensao = "pdf";
           mimeType = "application/pdf";
         } else {
-          fileBase64 = btoa(String.fromCharCode(...uint8Array));
+          fileBase64 = Buffer.from(uint8Array).toString("base64");
           mimeType = selectedFile.mimeType || "";
           if (mimeType.includes("pdf")) extensao = "pdf";
           else if (mimeType.includes("video")) extensao = "mp4";
