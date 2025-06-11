@@ -111,7 +111,7 @@ export const Upload = () => {
       const base64 = await FileSystem.readAsStringAsync(img.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-      const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+      const buffer = Buffer.from(base64, "base64");
 
       let embeddedImage;
       if (img.mimeType?.includes("png") || img.uri.toLowerCase().endsWith(".png")) {
@@ -180,7 +180,7 @@ const enviarArquivo = async () => {
         const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        const uint8Array = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+        const uint8Array = Buffer.from(base64, "base64");
 
         // Se for imagem, converte para PDF
         if (selectedFile.mimeType?.includes("image")) {
