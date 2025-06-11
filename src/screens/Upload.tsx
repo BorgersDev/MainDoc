@@ -247,12 +247,20 @@ const enviarArquivo = async () => {
     setValoresIndices({});
     setThereIsFile(false);
   } catch (error) {
-   console.log("❌ Erro ao enviar:", {
-    responseData: error?.response?.data,
-    status: error?.response?.status,
-    headers: error?.response?.headers,
-    message: error?.message,
-  });
+    if (error instanceof AppError) {
+      console.log("❌ Erro ao enviar:", {
+        responseData: error.response?.data,
+        status: error.status,
+        headers: error.headers,
+        message: error.message,
+      });
+    } else {
+      console.log("❌ Erro inesperado:", error);
+    }
+
+    const title = error instanceof AppError
+      ? error.message
+      : "Erro ao enviar o documento";
 
     toast.show({
       placement: "top",
@@ -260,7 +268,7 @@ const enviarArquivo = async () => {
         <ToastMessage
           action="error"
           id={id}
-          title="Erro ao enviar o documento"
+          title={title}
           onClose={() => toast.close(id)}
         />
       ),
