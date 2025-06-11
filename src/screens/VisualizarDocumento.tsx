@@ -28,8 +28,8 @@ export const VisualizarDocumento = () => {
             <Text className="font-heading text-gray-950">Voltar</Text>
           </HStack>
         </TouchableOpacity>
-        <VStack>
-          <Text className="font-heading">{name}</Text>
+        <VStack className="items-center justify-center">
+          <Text className=" justify-normal items-center font-heading">{name}</Text>
         </VStack>
       </HStack>
       <HStack className="bg-white h-[5%]" />

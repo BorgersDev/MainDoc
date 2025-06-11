@@ -245,7 +245,7 @@ export const DocsPorTipo = () => {
         ListFooterComponent={hasMore ? <Loading /> : null}
       />}
       <Fab onPress={() => navigator.navigate('Upload')} className=" w-[14%] h-[7%] bg-white active:bg-gray-100 shadow-gray-200 shadow-md mr-3 mb-12 " placement="bottom right" >
-        <FabIcon as={AddIcon} className="color-gray-950" />
+        <Feather name="plus" size={24} color="#1e40af" />
       </Fab>
     </VStack>
   );

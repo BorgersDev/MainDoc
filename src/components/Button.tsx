@@ -14,7 +14,7 @@ export const Button = ({ title, variant = "dark", isLoading = false, ...rest }: 
       className={`rounded-3xl border-0 text-lg
         ${variant === "dark" ? "bg-blue100 active:bg-blue200" : "bg-gray100 active:bg-gray200"}`
       }
-      disabled={isLoading}
+      disabled={isLoading || rest.disabled}
       {...rest}
     >
       {isLoading ? (
