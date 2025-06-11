@@ -36,7 +36,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const userAndTokenUpdate = async (userData: UserDTO, userToken: string, companyToken: string, basicAuthHeader: string) => {
         api.defaults.headers.common['Authorization'] = basicAuthHeader;
         api.defaults.headers.common['token'] = companyToken;
-        delete api.defaults.headers.common['Content-Type'];
+        api.defaults.headers.common['Content-Type'] = 'application/json';
       
         setUser(userData);
     }
