@@ -136,16 +136,6 @@ export const Upload = () => {
     return Buffer.from(bytes).toString("base64");
   };
 
-  const truncateFileName = (name: string, max = 30) => {
-    if (name.length <= max) return name;
-    const extIndex = name.lastIndexOf(".");
-    if (extIndex === -1) {
-      return name.slice(0, max);
-    }
-    const ext = name.slice(extIndex);
-    const allowedBase = max - ext.length;
-    return name.slice(0, allowedBase) + ext;
-  };
 
 const enviarArquivo = async () => {
   try {
@@ -216,52 +206,19 @@ const enviarArquivo = async () => {
       }
     }
 
-    const truncated = truncateFileName(fileName);
-    if (truncated !== fileName) {
-      toast.show({
-        placement: "top",
-        render: ({ id }) => (
-          <ToastMessage
-            id={id}
-            title="Nome do arquivo reduzido para 30 caracteres"
-            onClose={() => toast.close(id)}
-          />
-        ),
-      });
-      fileName = truncated;
-    }
-
     const payload = {
       nome: fileName,
       arquivoAssinado: false,
       tipoDocumentoVO: {
         codigo: tipoDocumentoSelecionado.codigo,
       },
-      indiceArquivoVOs: tipoDocumentoSelecionado.listaIndice.map((indice) => {
-        const original = valoresIndices[indice.codigo];
-        const valor = original?.slice(0, 30);
-
-        if (original && original.length > 30) {
-          toast.show({
-            placement: "top",
-            render: ({ id }) => (
-              <ToastMessage
-                id={id}
-                title={`Valor do índice ${indice.nome} truncado para 30 caracteres`}
-                onClose={() => toast.close(id)}
-              />
-            ),
-          });
-        }
-
-        return {
-          codigo: indice.codigo,
-          nomeIndice: indice.nome,
-          tipoIndice: indice.tipoIndice,
-          descricao: indice.descricao || indice.nome,
-          valor,
-        };
-      }),
+      indiceArquivoVOs: tipoDocumentoSelecionado.listaIndice.map((indice) => ({
+        codigo: indice.codigo,
+        nomeIndice: indice.nome,
+        tipoIndice: indice.tipoIndice,
+        descricao: indice.descricao || indice.nome,
+        valor: valoresIndices[indice.codigo],
+      })),
       file_base64: fileBase64,
     };
 
