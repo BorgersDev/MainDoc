@@ -225,7 +225,7 @@ const enviarArquivo = async () => {
     console.log("📤 Payload JSON:", JSON.stringify(payload, null, 2));
 
 
-    const response = await api.post("/upload", payload, {
+    const response = await api.post("/arquivo/upload", payload, {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     });
@@ -486,9 +486,14 @@ const enviarArquivo = async () => {
                           }}
                         />
                       ) : null}
-                      <Text className="text-blue-600 text-md font-semibold mt-2 ">
-                        Visualizar Tudo
-                      </Text>
+                      {
+                        !selectedFile?.mimeType?.includes("pdf") && (
+                          <Text className="text-blue-600 text-md font-semibold mt-2 ">
+                            Visualizar Tudo
+                          </Text>
+                        )
+                      }
+                      
                     </TouchableOpacity>
                   </VStack>
                 </Box>

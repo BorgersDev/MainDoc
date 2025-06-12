@@ -37,6 +37,7 @@ export const VisualizarDocumento = () => {
       {isPDF && (
         <WebView
           source={{ uri: (route.params as { url: string }).url }}
+          originWhitelist={["*"]}
           style={{ flex: 1 }}
           startInLoadingState
         />
