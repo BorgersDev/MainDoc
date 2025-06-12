@@ -223,7 +223,7 @@ const enviarArquivo = async () => {
         render: ({ id }) => (
           <ToastMessage
             id={id}
-            title="Nome do arquivo truncado para 30 caracteres"
+            title="Nome do arquivo reduzido para 30 caracteres"
             onClose={() => toast.close(id)}
           />
         ),
