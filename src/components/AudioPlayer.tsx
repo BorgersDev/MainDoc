@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import { Box } from '@/components/ui/box';
+import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
-import { Feather } from "@expo/vector-icons";
+import { Feather } from '@expo/vector-icons';
 
 type AudioPlayerProps = { uri: string };
 
@@ -10,7 +12,6 @@ export function AudioPlayer({ uri }: AudioPlayerProps) {
   const player = useAudioPlayer(uri);
   const status = useAudioPlayerStatus(player);
 
-  // tempos em segundos
   const current = status.currentTime ?? 0;
   const total = status.duration ?? 0;
   const progress = total > 0 ? current / total : 0;
@@ -22,61 +23,22 @@ export function AudioPlayer({ uri }: AudioPlayerProps) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* barra de progresso */}
-      <View style={styles.progressBar}>
-        <View style={[styles.fill, { flex: progress }]} />
-        <View style={[styles.remain, { flex: 1 - progress }]} />
-      </View>
-      {/* tempos */}
-      <View style={styles.timeRow}>
-        <Text>{fmt(current)}</Text>
-      </View>
-      {/* play/pause */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => (player.playing ? player.pause() : player.play())}
-      >
-            <Feather name={status.playing ? "pause" : "play"} size={24} color={"#9F9BA1"} />
-
-      </TouchableOpacity>
-    </View>
+    <Box className="mt-4 px-4 bg-gray-200 p-5 rounded-lg">
+      {/* controle de reprodução e barra de progresso */}
+      <HStack className="flex-row items-center mb-2">
+        <TouchableOpacity onPress={() => (player.playing ? player.pause() : player.play())}>
+          <Feather name={player.playing ? 'pause' : 'play'} size={24} color="#1e40af" />
+        </TouchableOpacity>
+        <Box className="flex-row w-[80%] h-2 bg-gray-300 rounded-full overflow-hidden ml-3">
+          <Box className="bg-primary-600" style={{ flex: progress }} />
+          <Box className="bg-gray-300" style={{ flex: 1 - progress }} />
+        </Box>
+      </HStack>
+      {/* indicadores de tempo */}
+      <HStack className="flex-row justify-between">
+        <Text className="text-sm">{fmt(current)}</Text>
+        <Text className="text-sm">{fmt(total)}</Text>
+      </HStack>
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 16,
-    paddingHorizontal: 20,
-  },
-  progressBar: {
-    flexDirection: 'row',
-    height: 10,
-    borderRadius: 2,
-    overflow: 'hidden',
-    backgroundColor: '#eee',
-    marginBottom: 8,
-  },
-  fill: {
-    backgroundColor: '#1e40af',
-  },
-  remain: {
-    backgroundColor: '#ccc',
-  },
-  timeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  button: {
-    alignSelf: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: '#1e40af',
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
