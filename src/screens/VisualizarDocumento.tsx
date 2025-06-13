@@ -3,11 +3,11 @@ import { WebView } from "react-native-webview";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps, AppRoutes } from "@routes/app.routes";
 import { VStack } from "@/components/ui/vstack";
+import { Header } from "@components/Header";
 import { HStack } from "@/components/ui/hstack";
-import { TouchableOpacity, ScrollView, Image, View } from "react-native";
+import { TouchableOpacity, ScrollView, Image } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Feather } from "@expo/vector-icons";
-import { Video } from "expo-video";
 
 type VisualizarDocumentoRouteProp = RouteProp<AppRoutes, "VisualizarDocumento">;
 
@@ -15,14 +15,12 @@ export const VisualizarDocumento = () => {
   const route = useRoute<VisualizarDocumentoRouteProp>();
   const navigator = useNavigation<AppNavigationRoutesProps>();
 
-  const { name, mimeType } = route.params;
+  const { name } = route.params;
   const isImageList = "images" in route.params;
-  const isPDF = "url" in route.params && mimeType?.includes("pdf");
-  const isVideo = mimeType?.startsWith("video");
-  const isAudio = mimeType?.startsWith("audio");
+  const isPDF = "url" in route.params;
 
   return (
-    <VStack className="flex-1 mt-[14%] bg-white">
+    <VStack className="flex-1 mt-[14%]">
       <HStack className="pl-2.5 gap-18 items-center justify-between h-[7%] w-[80%]">
         <TouchableOpacity onPress={() => navigator.goBack()}>
           <HStack className="gap-1 items-center">
@@ -36,7 +34,6 @@ export const VisualizarDocumento = () => {
       </HStack>
       <HStack className="bg-white h-[5%]" />
 
-      {/* PDF */}
       {isPDF && (
         <WebView
           source={{ uri: (route.params as { url: string }).url }}
@@ -46,32 +43,6 @@ export const VisualizarDocumento = () => {
         />
       )}
 
-      {/* Vídeo */}
-      {isVideo && "url" in route.params && (
-        <Video
-          source={{ uri: route.params.url }}
-          useNativeControls
-          resizeMode="contain"
-          shouldPlay={false}
-          style={{ flex: 1, backgroundColor: "black" }}
-        />
-      )}
-
-      {/* Áudio */}
-      {isAudio && "url" in route.params && (
-        <View className="flex-1 justify-center items-center px-4">
-          <Text className="text-lg mb-4">Áudio: {name}</Text>
-          <Video
-            source={{ uri: route.params.url }}
-            useNativeControls
-            shouldPlay={false}
-            style={{ width: "100%", height: 60 }}
-            resizeMode="contain"
-          />
-        </View>
-      )}
-
-      {/* Imagens */}
       {isImageList && (
         <ScrollView contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
           {(route.params as { images: { uri: string }[] }).images.map((img, index) => (

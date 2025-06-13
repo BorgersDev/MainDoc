@@ -30,7 +30,6 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
-import { Video } from 'expo-av';
 
 
 
