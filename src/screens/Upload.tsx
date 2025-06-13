@@ -30,7 +30,8 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
-import { Video } from 'expo-av';
+import { Video } from "expo-video";
+import { Audio } from "expo-audio";
 
 
 
@@ -56,6 +57,9 @@ export const Upload = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadSteps, setUploadSteps] = useState<string[]>([]);
   const appendStep = (text: string) => setUploadSteps((prev) => [...prev, text]);
+
+  const [audioSound, setAudioSound] = useState<Audio.Sound | null>(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   const openFileOptions = () => {
     Alert.alert("Selecionar arquivo", "Escolha a origem do documento", [
@@ -90,12 +94,13 @@ export const Upload = () => {
 
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
+      mediaTypes: ["images", "videos", "audio"],
       allowsMultipleSelection: true,
     });
+
     if (!result.canceled) {
       console.log("Arquivo da galeria selecionado:", result.assets);
-      setSelectedFile(result.assets);
+      setSelectedFile(result.assets.length === 1 ? result.assets[0] : result.assets);
       setThereIsFile(true);
     }
   };
@@ -145,6 +150,31 @@ export const Upload = () => {
     return Buffer.from(bytes).toString("base64");
   };
 
+  const toggleAudioPlayback = async () => {
+    if (!selectedFile?.mimeType?.includes("audio")) return;
+
+    if (!audioSound) {
+      const { sound } = await Audio.Sound.createAsync({ uri: selectedFile.uri });
+      setAudioSound(sound);
+      await sound.playAsync();
+      setIsAudioPlaying(true);
+    } else {
+      if (isAudioPlaying) {
+        await audioSound.pauseAsync();
+        setIsAudioPlaying(false);
+      } else {
+        await audioSound.playAsync();
+        setIsAudioPlaying(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      audioSound?.unloadAsync();
+    };
+  }, [audioSound]);
+
 
 
 const enviarArquivo = async () => {
@@ -170,7 +200,9 @@ const enviarArquivo = async () => {
         mimeType = "application/pdf";
       } else if (selectedFile) {
         appendStep("Lendo arquivo único...");
-        const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, { encoding: FileSystem.EncodingType.Base64 });
+        const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
         const uint8Array = Buffer.from(base64, "base64");
 
         if (selectedFile.mimeType?.includes("image")) {
@@ -179,10 +211,18 @@ const enviarArquivo = async () => {
           fileBase64 = getBase64FromBytes(pdfBytes);
           extensao = "pdf";
           mimeType = "application/pdf";
+        } else if (selectedFile.mimeType?.includes("audio")) {
+          fileBase64 = Buffer.from(uint8Array).toString("base64");
+          mimeType = selectedFile.mimeType || "";
+          extensao = mimeType.split("/")[1] || "mp3";
         } else {
           fileBase64 = Buffer.from(uint8Array).toString("base64");
           mimeType = selectedFile.mimeType || "";
-          extensao = mimeType.includes("pdf") ? "pdf" : mimeType.includes("video") ? "mp4" : "bin";
+          extensao = mimeType.includes("pdf")
+            ? "pdf"
+            : mimeType.includes("video")
+            ? "mp4"
+            : "bin";
         }
         fileName = selectedFile.name || "arquivo";
       }
@@ -379,38 +419,31 @@ const enviarArquivo = async () => {
                     <TouchableOpacity
                       className="items-center"
                       onPress={() => {
-                        // Caso tenha imagens escaneadas (câmera)
                         if (scannedImages.length > 0) {
                           navigator.navigate("VisualizarDocumento", {
                             images: scannedImages,
                             name: "",
                           });
-                        }
-                        // Caso tenha múltiplos arquivos selecionados da galeria
-                        else if (Array.isArray(selectedFile)) {
+                        } else if (Array.isArray(selectedFile)) {
                           navigator.navigate("VisualizarDocumento", {
                             images: selectedFile,
-                            name:"",
+                            name: "",
                           });
-                        }
-                        // Caso seja um único arquivo (imagem ou PDF)
-                        else if (selectedFile?.mimeType?.includes("image")) {
+                        } else if (selectedFile?.mimeType?.includes("image")) {
                           navigator.navigate("VisualizarDocumento", {
                             images: [selectedFile],
-                            name:"",
+                            name: "",
                           });
-                        } else if (selectedFile?.mimeType?.includes("pdf")) {
+                        } else if (
+                          selectedFile?.mimeType?.includes("pdf") ||
+                          selectedFile?.mimeType?.includes("video") ||
+                          selectedFile?.mimeType?.includes("audio")
+                        ) {
                           navigator.navigate("VisualizarDocumento", {
                             url: selectedFile.uri,
                             name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
                           });
-                        } else if (selectedFile?.mimeType?.includes("mp4")) {
-                          <Video
-                            source={{ uri: selectedFile.uri }}
-                            style={{ width: 200, height: 200 }}
-                            useNativeControls
-                            shouldPlay={false}
-                          />
                         }
                       }}
                       activeOpacity={0.8}
@@ -419,33 +452,30 @@ const enviarArquivo = async () => {
                       {Array.isArray(selectedFile) ? (
                         <Image
                           source={{ uri: selectedFile[0].uri }}
-                          style={{
-                            width: 200,
-                            height: 200,
-                            resizeMode: "contain",
-                          }}
+                          style={{ width: 200, height: 200, resizeMode: "contain" }}
                         />
                       ) : selectedFile?.mimeType?.includes("image") ? (
                         <Image
                           source={{ uri: selectedFile.uri }}
-                          style={{
-                            width: 200,
-                            height: 200,
-                            resizeMode: "contain",
-                          }}
+                          style={{ width: 200, height: 200, resizeMode: "contain" }}
                         />
+                      ) : selectedFile?.mimeType?.includes("video") ? (
+                        <Video
+                          source={{ uri: selectedFile.uri }}
+                          style={{ width: 200, height: 200 }}
+                          useNativeControls
+                          resizeMode="contain"
+                        />
+                      ) : selectedFile?.mimeType?.includes("audio") ? (
+                        <TouchableOpacity onPress={toggleAudioPlayback} className="p-2 bg-blue-700 rounded">
+                          <Text className="text-white">{isAudioPlaying ? "Pausar" : "Tocar"}</Text>
+                        </TouchableOpacity>
                       ) : selectedFile?.mimeType?.includes("pdf") ? (
-                        <Text className="text-blue-600 underline">
-                          Visualizar PDF
-                        </Text>
+                        <Text className="text-blue-600 underline">Visualizar PDF</Text>
                       ) : scannedImages.length > 0 ? (
                         <Image
                           source={{ uri: scannedImages[0].uri }}
-                          style={{
-                            width: 200,
-                            height: 200,
-                            resizeMode: "contain",
-                          }}
+                          style={{ width: 200, height: 200, resizeMode: "contain" }}
                         />
                       ) : null}
                       {

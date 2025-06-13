@@ -8,6 +8,7 @@ import { TouchableOpacity, ScrollView, Image, View } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Feather } from "@expo/vector-icons";
 import { Video } from "expo-video";
+import { Audio } from "expo-audio";
 
 type VisualizarDocumentoRouteProp = RouteProp<AppRoutes, "VisualizarDocumento">;
 
@@ -20,6 +21,32 @@ export const VisualizarDocumento = () => {
   const isPDF = "url" in route.params && mimeType?.includes("pdf");
   const isVideo = mimeType?.startsWith("video");
   const isAudio = mimeType?.startsWith("audio");
+  const [audioSound, setAudioSound] = React.useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  const togglePlayback = async () => {
+    if (!("url" in route.params)) return;
+    if (!audioSound) {
+      const { sound } = await Audio.Sound.createAsync({ uri: route.params.url });
+      setAudioSound(sound);
+      await sound.playAsync();
+      setIsPlaying(true);
+    } else {
+      if (isPlaying) {
+        await audioSound.pauseAsync();
+        setIsPlaying(false);
+      } else {
+        await audioSound.playAsync();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      audioSound?.unloadAsync();
+    };
+  }, [audioSound]);
 
   return (
     <VStack className="flex-1 mt-[14%] bg-white">
@@ -61,13 +88,9 @@ export const VisualizarDocumento = () => {
       {isAudio && "url" in route.params && (
         <View className="flex-1 justify-center items-center px-4">
           <Text className="text-lg mb-4">Áudio: {name}</Text>
-          <Video
-            source={{ uri: route.params.url }}
-            useNativeControls
-            shouldPlay={false}
-            style={{ width: "100%", height: 60 }}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={togglePlayback} className="p-4 bg-blue-700 rounded-xl">
+            <Text className="text-white">{isPlaying ? "Pausar" : "Tocar"}</Text>
+          </TouchableOpacity>
         </View>
       )}
 
