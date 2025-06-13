@@ -8,6 +8,7 @@ import { TouchableOpacity, ScrollView, Image, View } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Feather } from "@expo/vector-icons";
 import { Video } from "expo-video";
+import { Audio } from "expo-audio";
 
 type VisualizarDocumentoRouteProp = RouteProp<AppRoutes, "VisualizarDocumento">;
 
@@ -17,9 +18,57 @@ export const VisualizarDocumento = () => {
 
   const { name, mimeType } = route.params;
   const isImageList = "images" in route.params;
-  const isPDF = "url" in route.params && mimeType?.includes("pdf");
-  const isVideo = mimeType?.startsWith("video");
-  const isAudio = mimeType?.startsWith("audio");
+
+  let extension: string | undefined;
+  if ("url" in route.params) {
+    const match = route.params.url.split("?")[0].split(".").pop();
+    extension = match?.toLowerCase();
+  }
+
+  const isPDF =
+    (mimeType?.includes("pdf") ?? false) || extension === "pdf";
+
+  const videoExtensions = ["mp4", "mov", "m4v", "avi", "webm", "ogg"];
+  const audioExtensions = ["mp3", "wav", "ogg", "m4a", "aac", "flac"];
+
+  const isVideo =
+    (mimeType?.startsWith("video") ?? false) ||
+    (extension ? videoExtensions.includes(extension) : false);
+  const isAudio =
+    (mimeType?.startsWith("audio") ?? false) ||
+    (extension ? audioExtensions.includes(extension) : false);
+
+  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isAudio && "url" in route.params) {
+      let mounted = true;
+      let currentSound: Audio.Sound;
+      Audio.Sound.createAsync({ uri: route.params.url }).then(({ sound }) => {
+        if (mounted) {
+          currentSound = sound;
+          setSound(sound);
+        }
+      });
+      return () => {
+        mounted = false;
+        currentSound?.unloadAsync();
+      };
+    }
+  }, [isAudio, route.params]);
+
+  const handlePlayPause = async () => {
+    if (!sound) return;
+    const status = await sound.getStatusAsync();
+    if (status.isPlaying) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+    } else {
+      await sound.playAsync();
+      setIsPlaying(true);
+    }
+  };
 
   return (
     <VStack className="flex-1 mt-[14%] bg-white">
@@ -61,13 +110,9 @@ export const VisualizarDocumento = () => {
       {isAudio && "url" in route.params && (
         <View className="flex-1 justify-center items-center px-4">
           <Text className="text-lg mb-4">Áudio: {name}</Text>
-          <Video
-            source={{ uri: route.params.url }}
-            useNativeControls
-            shouldPlay={false}
-            style={{ width: "100%", height: 60 }}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={handlePlayPause}>
+            <Feather name={isPlaying ? "pause" : "play"} size={40} color="black" />
+          </TouchableOpacity>
         </View>
       )}
 
