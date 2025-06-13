@@ -20,10 +20,10 @@ export const ChartCard = () => {
     const sliceColor = documentData.map(doc => doc.color)
 
     // Use breakpoint value to determine the layout
-    const layout = useBreakpointValue { 
+    const layout = useBreakpointValue({
         base: 'wrap', // smaller screens
-        md: 'row' // larger screens
-    });
+        md: 'row', // larger screens
+    }) as 'wrap' | 'row';
 
     return (
         <Card
