@@ -1,5 +1,6 @@
 import { Arquivos } from "@screens/Arquivos";
 import { TrocarEmpresa } from "@screens/TrocarEmpresa";
+import { SelecionarEmpresa } from "@screens/SelecionarEmpresa";
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Upload } from "@screens/Upload";
 import { DocsPorTipo } from "@screens/DocsPorTipo";
@@ -10,6 +11,7 @@ import { VisualizarDocumento } from "@screens/VisualizarDocumento";
 export type AppRoutes = {
     Arquivos: undefined;
     TrocarEmpresa: undefined;
+    SelecionarEmpresa: undefined;
     Upload: undefined;
     DocsPorTipo: {
         codigoDepartamento: number;
@@ -32,7 +34,7 @@ export const AppRoutes = ( ) => {
   return (
     <Navigator screenOptions={{ headerShown: false }}>
       {!empresaConfirmada ? (
-        <Screen name="TrocarEmpresa" component={TrocarEmpresa} />
+        <Screen name="SelecionarEmpresa" component={SelecionarEmpresa} />
       ) : (
         <>
           <Screen name="Arquivos" component={Arquivos} />

@@ -85,7 +85,7 @@ export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
               <AccordionTrigger className="bg-gray-100">
                 {({ isExpanded }) => (
                   <>
-                    {isExpanded ? <AccordionIcon as={ChevronUpIcon} /> : <Feather name="search" size={22} />}
+                    {isExpanded ? <Feather name="chevron-up" size={22} /> : <Feather name="search" size={22} />}
                   </>
                 )}
               </AccordionTrigger>
@@ -103,7 +103,7 @@ export const Header = ({GoBack, InputValue, setInputValue}: HeaderProps) => {
                 autoCorrect={false}
               />
               <HStack className="mx-2 items-center">
-                <TouchableOpacity onPress={() => console.log("piru1")}>
+                <TouchableOpacity onPress={() => console.log("teste")}>
                   <Feather name="search" size={18} />
                 </TouchableOpacity>
               </HStack>

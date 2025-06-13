@@ -12,7 +12,7 @@ import { useAuth } from "@hooks/useAuth";
 
 
 
-export const TrocarEmpresa = () => {
+export const SelecionarEmpresa = () => {
     const { user, switchComp, setEmpresaConfirmada } = useAuth();
     const navigator = useNavigation<AppNavigationRoutesProps>();
     let empresas = user.empresaVOs;
@@ -27,13 +27,13 @@ export const TrocarEmpresa = () => {
             <Text>{user.empresaVOs[0].codigo}</Text>
             <VStack className="flex-1">
                 <HStack className="pr-6 justify-end">
-                    <TouchableOpacity onPress={() => navigator.goBack()}>
+                    {/* <TouchableOpacity onPress={() => navigator.navigate('Arquivos')}>
                         <HStack className="gap-1">
                             <Feather name="x" size={24} color="$gray300" />
                         </HStack>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </HStack>
-                <Center className="flex-1 justify-center items-end">
+                <Center className="flex-1 justify-center items-end ">
                     <FlatList
                         data={empresas}
                         keyExtractor={(item) => item.codigo}
