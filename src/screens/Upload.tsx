@@ -88,16 +88,29 @@ export const Upload = () => {
   };
 
   const pickFromGallery = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
-      allowsMultipleSelection: true,
-    });
-    if (!result.canceled) {
-      console.log("Arquivo da galeria selecionado:", result.assets);
-      setSelectedFile(result.assets);
-      setThereIsFile(true);
-    }
-  };
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsMultipleSelection: true,    // deixa user selecionar várias…
+  });
+
+  if (result.canceled) return;
+
+  const assets = result.assets;
+  // 1) se **todos** são imagens → Array de imagens
+  const allImages = assets.every(a => a.type === "image");
+  if (allImages) {
+    setScannedImages([]);           // limpa câmera
+    setSelectedFile(assets);        // passamos o array inteiro
+  }
+  else {
+    // 2) senão, pegue **só o primeiro** vídeo/áudio (ou whicever)
+    const media = assets.find(a => a.type === "video" || a.type === "audio")!;
+    setScannedImages([]);           // limpa câmera
+    setSelectedFile(media);         // passamos um único objeto
+  }
+
+  setThereIsFile(true);
+};
 
   const pickFromFiles = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -144,8 +157,6 @@ export const Upload = () => {
     return Buffer.from(bytes).toString("base64");
   };
 
-
-
 const enviarArquivo = async () => {
     try {
       setUploading(true);
@@ -153,6 +164,12 @@ const enviarArquivo = async () => {
       let fileBase64 = "", fileName = "upload_app.pdf", extensao = "", mimeType = "";
 
       appendStep("Verificando origem do arquivo...");
+      let isVideo = false;
+      let isAudio = false;
+      if (!Array.isArray(selectedFile) && selectedFile) {
+        isVideo = selectedFile.mimeType?.startsWith("video") ?? false;
+        isAudio = selectedFile.mimeType?.startsWith("audio") ?? false;
+      }
       if (scannedImages.length > 0) {
         appendStep("Criando PDF das imagens digitalizadas...");
         const pdfBytes = await createPdfFromImages(scannedImages);
@@ -228,6 +245,7 @@ const enviarArquivo = async () => {
       setUploadSteps([]);
     }
   };
+
 
   const todosIndicesPreenchidos = () => {
   if (!tipoDocumentoSelecionado?.listaIndice?.length) return false;
