@@ -89,7 +89,11 @@ export const DocsPorTipo = () => {
       setIsLoading(false);
     }
   }   
-  const handleVisualizar = async (id: number, name: string) => {
+  const handleVisualizar = async (
+    id: number,
+    name: string,
+    extensao: string,
+  ) => {
     try {
       const response = await api.get(`/arquivo/url/${id}`, {
         headers: {
@@ -97,7 +101,19 @@ export const DocsPorTipo = () => {
         }
       })
       const url = response.data.url;
-      navigator.navigate('VisualizarDocumento', { url, name });
+      const ext = extensao.toLowerCase();
+      const mimeMap: Record<string, string> = {
+        pdf: 'application/pdf',
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        png: 'image/png',
+        gif: 'image/gif',
+        mp4: 'video/mp4',
+        mp3: 'audio/mpeg',
+        wav: 'audio/wav',
+      };
+      const mimeType = mimeMap[ext] || '';
+      navigator.navigate('VisualizarDocumento', { url, name, mimeType });
       
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -225,7 +241,7 @@ export const DocsPorTipo = () => {
                 </Center>
                 <Center className="w-[45%] ml-2">
                     <HStack className="gap-4">
-                            <TouchableOpacity disabled={!item.apresentarPreview} onPress={() => handleVisualizar(item.codigo, item.nome)}>
+                            <TouchableOpacity disabled={!item.apresentarPreview} onPress={() => handleVisualizar(item.codigo, item.nome, item.extensao)}>
                                 <Feather name="eye" size={20} color={item.apresentarPreview ? "#1e40af" : "#9ca3af" } />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleDownload(item.codigo, item.nome.replace('.pdf', ''), item.extensao)}>
