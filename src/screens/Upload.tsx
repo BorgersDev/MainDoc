@@ -89,9 +89,9 @@ export const Upload = () => {
 
   const pickFromGallery = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.All,
-    allowsMultipleSelection: true,    // deixa user selecionar várias…
-  });
+      mediaTypes: ["images", "videos"],
+      allowsMultipleSelection: true,
+    });
 
   if (result.canceled) return;
 
@@ -164,6 +164,12 @@ const enviarArquivo = async () => {
       let fileBase64 = "", fileName = "upload_app.pdf", extensao = "", mimeType = "";
 
       appendStep("Verificando origem do arquivo...");
+      let isVideo = false;
+      let isAudio = false;
+      if (!Array.isArray(selectedFile) && selectedFile) {
+        isVideo = selectedFile.mimeType?.startsWith("video") ?? false;
+        isAudio = selectedFile.mimeType?.startsWith("audio") ?? false;
+      }
       if (scannedImages.length > 0) {
         appendStep("Criando PDF das imagens digitalizadas...");
         const pdfBytes = await createPdfFromImages(scannedImages);
@@ -192,15 +198,7 @@ const enviarArquivo = async () => {
         } else {
           fileBase64 = Buffer.from(uint8Array).toString("base64");
           mimeType = selectedFile.mimeType || "";
-          if (mimeType.includes("pdf")) {
-            extensao = "pdf";
-          } else if (mimeType.startsWith("video/")) {
-            extensao = mimeType.split("/")[1] || "mp4";
-          } else if (mimeType.startsWith("audio/")) {
-            extensao = mimeType.split("/")[1] || "mp3";
-          } else {
-            extensao = mimeType.split("/")[1] || "bin";
-          }
+          extensao = mimeType.includes("pdf") ? "pdf" : mimeType.includes("video") ? "mp4" : "bin";
         }
         fileName = selectedFile.name || "arquivo";
       }
@@ -230,10 +228,8 @@ const enviarArquivo = async () => {
         ),
       });
 
-      setSelectedFile(null);
-      setScannedImages([]);
-      setValoresIndices({});
-      setThereIsFile(false);
+     resetForm();
+
     } catch (error) {
       const title = error instanceof AppError ? error.message : "Erro ao enviar o documento";
       toast.show({
@@ -246,6 +242,93 @@ const enviarArquivo = async () => {
       setUploading(false);
       setUploadSteps([]);
     }
+  };
+function getExtension(uri: string): string {
+  const match = uri.match(/\.([^.\/]+)$/);
+  return match ? match[1] : '';
+}
+
+  const enviarVideoAudio = async () => {
+  try {
+    setUploading(true);
+    setUploadSteps([ 'Iniciando envio de mídia...' ]);
+
+    // copia URI content:// sem extensão para cache
+    let localUri = selectedFile.uri;
+    const ext = getExtension(localUri);
+    if (!localUri.startsWith('file://') || !ext) {
+      const filename = selectedFile.name ?? `media.${ext || 'bin'}`;
+      const dest = `${FileSystem.cacheDirectory}${filename}`;
+      await FileSystem.copyAsync({ from: localUri, to: dest });
+      localUri = dest;
+    }
+
+    appendStep('Lendo arquivo de mídia...');
+    const base64 = await FileSystem.readAsStringAsync(localUri, {
+      encoding: FileSystem.EncodingType.Base64
+    });
+
+    const mimeType = selectedFile.mimeType ?? `application/${ext}`;
+    const fileName = selectedFile.name ?? `media.${ext}`;
+
+    appendStep('Montando payload de mídia...');
+    const payload = {
+      nome: fileName,
+      arquivoAssinado: false,
+      tipoDocumentoVO: { codigo: tipoDocumentoSelecionado.codigo },
+      indiceArquivoVOs: (tipoDocumentoSelecionado.listaIndice || []).map((indice: any) => ({
+        codigo: indice.codigo,
+        nomeIndice: indice.nome,
+        tipoIndice: indice.tipoIndice,
+        descricao: indice.descricao || indice.nome,
+        valor: valoresIndices[indice.codigo],
+      })),
+      file_base64: base64,
+      mimeType,
+    };
+
+    appendStep('Enviando mídia para o servidor...');
+    await api.post('/arquivo/upload', payload, {
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+    });
+
+    toast.show({
+      placement: 'top',
+      render: ({ id }) => (
+        <ToastMessage
+          id={id}
+          title="Mídia enviada com sucesso!"
+          onClose={() => toast.close(id)}
+        />
+      ),
+    });
+
+    resetForm(); // limpa states
+
+  } catch (error) {
+    console.error("Erro ao enviar mídia:", error);
+    const title = error instanceof AppError
+      ? error.message
+      : 'Erro ao enviar mídia';
+    toast.show({
+      placement: 'top',
+      render: ({ id }) => (
+        <ToastMessage action="error" id={id} title={title} onClose={() => toast.close(id)}/>
+      ),
+    });
+  } finally {
+    setUploading(false);
+    setUploadSteps([]);
+  }
+};
+
+  /** Reseta formulário */
+  const resetForm = () => {
+    setSelectedFile(null);
+    setScannedImages([]);
+    setValoresIndices({});
+    setThereIsFile(false);
   };
 
 
@@ -510,7 +593,22 @@ const enviarArquivo = async () => {
                   )}
 
                   {tipoDocumentoSelecionado && (
-                    <Button className="mt-3 mx-12 bg-blue-700 disabled:bg-gray-400" onPress={enviarArquivo} title="Enviar documento" disabled={!todosIndicesPreenchidos()} />
+                    <Button
+                    className="mt-3 mx-12 bg-blue-700 disabled:bg-gray-400"
+                    onPress={
+                      selectedFile.mimeType?.startsWith("video") ||
+                      selectedFile.mimeType?.startsWith("audio")
+                        ? enviarVideoAudio
+                        : enviarArquivo
+                    }
+                    title={
+                      selectedFile.mimeType?.startsWith("video") ||
+                      selectedFile.mimeType?.startsWith("audio")
+                        ? "Enviar mídia"
+                        : "Enviar documento"
+                    }
+                    disabled={!todosIndicesPreenchidos()}
+                  />
                   )}
                 </Box>
               )}
