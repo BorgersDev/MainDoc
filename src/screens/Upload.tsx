@@ -164,12 +164,6 @@ const enviarArquivo = async () => {
       let fileBase64 = "", fileName = "upload_app.pdf", extensao = "", mimeType = "";
 
       appendStep("Verificando origem do arquivo...");
-      let isVideo = false;
-      let isAudio = false;
-      if (!Array.isArray(selectedFile) && selectedFile) {
-        isVideo = selectedFile.mimeType?.startsWith("video") ?? false;
-        isAudio = selectedFile.mimeType?.startsWith("audio") ?? false;
-      }
       if (scannedImages.length > 0) {
         appendStep("Criando PDF das imagens digitalizadas...");
         const pdfBytes = await createPdfFromImages(scannedImages);
@@ -198,7 +192,15 @@ const enviarArquivo = async () => {
         } else {
           fileBase64 = Buffer.from(uint8Array).toString("base64");
           mimeType = selectedFile.mimeType || "";
-          extensao = mimeType.includes("pdf") ? "pdf" : mimeType.includes("video") ? "mp4" : "bin";
+          if (mimeType.includes("pdf")) {
+            extensao = "pdf";
+          } else if (mimeType.startsWith("video/")) {
+            extensao = mimeType.split("/")[1] || "mp4";
+          } else if (mimeType.startsWith("audio/")) {
+            extensao = mimeType.split("/")[1] || "mp3";
+          } else {
+            extensao = mimeType.split("/")[1] || "bin";
+          }
         }
         fileName = selectedFile.name || "arquivo";
       }
