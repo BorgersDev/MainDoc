@@ -3,62 +3,85 @@ import { WebView } from "react-native-webview";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps, AppRoutes } from "@routes/app.routes";
 import { VStack } from "@/components/ui/vstack";
-import { Header } from "@components/Header";
 import { HStack } from "@/components/ui/hstack";
-import { TouchableOpacity, ScrollView, Image } from "react-native";
+import { TouchableOpacity, ScrollView, Image, View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Feather } from "@expo/vector-icons";
-
-type VisualizarDocumentoRouteProp = RouteProp<AppRoutes, "VisualizarDocumento">;
-
+import { AudioPlayer } from "@components/AudioPlayer";
+import VideoSection from "@components/VideoSection";
 export const VisualizarDocumento = () => {
-  const route = useRoute<VisualizarDocumentoRouteProp>();
+  const route = useRoute<RouteProp<AppRoutes, 'VisualizarDocumento'>>();
   const navigator = useNavigation<AppNavigationRoutesProps>();
+  const params = route.params as
+    | { url: string; name: string }
+    | { images: { uri: string }[]; name: string }
+    | { mediaUri: string; mimeType: string; name: string };
 
-  const { name } = route.params;
-  const isImageList = "images" in route.params;
-  const isPDF = "url" in route.params;
+  const isPDF = 'url' in params;
+  const isImageList = 'images' in params;
+  const isMedia = 'mediaUri' in params;
 
   return (
     <VStack className="flex-1 mt-[14%]">
-      <HStack className="pl-2.5 gap-18 items-center justify-between h-[7%] w-[80%]">
+      {/* Header */}
+      <HStack style={styles.header}>
         <TouchableOpacity onPress={() => navigator.goBack()}>
           <HStack className="gap-1 items-center">
             <Feather name="arrow-left" size={22} color="gray" />
             <Text className="font-heading text-gray-950">Voltar</Text>
           </HStack>
         </TouchableOpacity>
-        <VStack className="items-center justify-center">
-          <Text className=" justify-normal items-center font-heading">{name}</Text>
-        </VStack>
+        <Text className="font-heading">{params.name}</Text>
       </HStack>
-      <HStack className="bg-white h-[5%]" />
 
+      {/* PDF */}
       {isPDF && (
         <WebView
-          source={{ uri: (route.params as { url: string }).url }}
+          source={{ uri: (params as { url: string }).url }}
           originWhitelist={["*"]}
-          style={{ flex: 1 }}
+          style={styles.flex}
           startInLoadingState
         />
       )}
 
+      {/* Imagens */}
       {isImageList && (
-        <ScrollView contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-          {(route.params as { images: { uri: string }[] }).images.map((img, index) => (
+        <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+          {(params as { images: { uri: string }[] }).images.map((img, idx) => (
             <Image
-              key={index}
+              key={idx}
               source={{ uri: img.uri }}
-              style={{
-                width: "100%",
-                height: 400,
-                marginBottom: 20,
-                resizeMode: "contain",
-              }}
+              style={styles.image}
             />
           ))}
         </ScrollView>
       )}
+
+      {/* Vídeo ou Áudio */}
+      {isMedia && (
+        <View style={styles.mediaContainer}>
+          {params.mimeType.startsWith('video') ? (
+            <VideoSection uri={params.mediaUri} />
+          ) : (
+            <AudioPlayer uri={params.mediaUri} />
+          )}
+        </View>
+      )}
     </VStack>
   );
 };
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  header: {
+    paddingLeft: 10,
+    paddingTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+  },
+  contentContainer: { padding: 16 },
+  image: { width: '100%', height: 400, marginBottom: 20, resizeMode: 'contain' },
+  mediaContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});

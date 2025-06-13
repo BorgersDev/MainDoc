@@ -19,7 +19,8 @@ export type AppRoutes = {
       };
     "VisualizarDocumento": 
   | { url: string; name: string }
-  | { images: { uri: string }[]; name: string };
+  | { images: { uri: string }[]; name: string }
+  | { mediaUri: string; mimeType: string; name: string };
 };
 
 
