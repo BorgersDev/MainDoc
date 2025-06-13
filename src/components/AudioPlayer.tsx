@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { Text } from '@/components/ui/text';
+import { Feather } from "@expo/vector-icons";
 
 type AudioPlayerProps = { uri: string };
 
@@ -30,16 +31,14 @@ export function AudioPlayer({ uri }: AudioPlayerProps) {
       {/* tempos */}
       <View style={styles.timeRow}>
         <Text>{fmt(current)}</Text>
-        <Text>{fmt(total)}</Text>
       </View>
       {/* play/pause */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => (player.playing ? player.pause() : player.play())}
       >
-        <Text style={styles.buttonText}>
-          {player.playing ? 'Pausar' : 'Tocar'}
-        </Text>
+            <Feather name={status.playing ? "pause" : "play"} size={24} color={"#9F9BA1"} />
+
       </TouchableOpacity>
     </View>
   );
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flexDirection: 'row',
-    height: 4,
+    height: 10,
     borderRadius: 2,
     overflow: 'hidden',
     backgroundColor: '#eee',
