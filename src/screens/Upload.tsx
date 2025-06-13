@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigationRoutesProps } from "@routes/app.routes";
@@ -48,6 +50,10 @@ export const Upload = () => {
     {}
   );
   const [scannedImages, setScannedImages] = useState<any[]>([]);
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadSteps, setUploadSteps] = useState<string[]>([]);
+  const appendStep = (text: string) => setUploadSteps((prev) => [...prev, text]);
 
   const openFileOptions = () => {
     Alert.alert("Selecionar arquivo", "Escolha a origem do documento", [
@@ -137,55 +143,35 @@ export const Upload = () => {
   };
 
 
+
 const enviarArquivo = async () => {
-  try {
-    console.log("⏳ Iniciando envio do arquivo...");
+    try {
+      setUploading(true);
+      setUploadSteps(["Iniciando envio do arquivo..."]);
+      let fileBase64 = "", fileName = "upload_app.pdf", extensao = "", mimeType = "";
 
-    let fileBase64 = "";
-    let fileName = "upload_app.pdf";
-    let extensao = "";
-    let mimeType = "";
-
-    console.log("📦 Estado atual:", {
-      scannedImages,
-      selectedFile,
-    });
-
-    if (scannedImages.length > 0) {
-      console.log("📸 Criando PDF das imagens digitalizadas...");
-      try {
+      appendStep("Verificando origem do arquivo...");
+      if (scannedImages.length > 0) {
+        appendStep("Criando PDF das imagens digitalizadas...");
         const pdfBytes = await createPdfFromImages(scannedImages);
         fileBase64 = getBase64FromBytes(pdfBytes);
         fileName = "documento_digitalizado.pdf";
         extensao = "pdf";
         mimeType = "application/pdf";
-      } catch (err) {
-        console.error("❌ Erro ao criar PDF das imagens da câmera:", err);
-        throw err;
-      }
-    } else if (Array.isArray(selectedFile)) {
-      console.log("🖼️ Criando PDF das imagens da galeria...");
-      try {
+      } else if (Array.isArray(selectedFile)) {
+        appendStep("Criando PDF das imagens da galeria...");
         const pdfBytes = await createPdfFromImages(selectedFile);
         fileBase64 = getBase64FromBytes(pdfBytes);
         fileName = "galeria_documento.pdf";
         extensao = "pdf";
         mimeType = "application/pdf";
-      } catch (err) {
-        console.error("❌ Erro ao criar PDF das imagens da galeria:", err);
-        throw err;
-      }
-    } else if (selectedFile) {
-      console.log("📁 Lendo arquivo único (pdf, imagem, vídeo, áudio...)");
-      try {
-        const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
+      } else if (selectedFile) {
+        appendStep("Lendo arquivo único...");
+        const base64 = await FileSystem.readAsStringAsync(selectedFile.uri, { encoding: FileSystem.EncodingType.Base64 });
         const uint8Array = Buffer.from(base64, "base64");
 
-        // Se for imagem, converte para PDF
         if (selectedFile.mimeType?.includes("image")) {
-          console.log("🧾 Convertendo imagem única em PDF...");
+          appendStep("Convertendo imagem em PDF...");
           const pdfBytes = await createPdfFromImages([selectedFile]);
           fileBase64 = getBase64FromBytes(pdfBytes);
           extensao = "pdf";
@@ -193,89 +179,53 @@ const enviarArquivo = async () => {
         } else {
           fileBase64 = Buffer.from(uint8Array).toString("base64");
           mimeType = selectedFile.mimeType || "";
-          if (mimeType.includes("pdf")) extensao = "pdf";
-          else if (mimeType.includes("video")) extensao = "mp4";
-          else if (mimeType.includes("audio")) extensao = "mp3";
-          else extensao = "bin";
+          extensao = mimeType.includes("pdf") ? "pdf" : mimeType.includes("video") ? "mp4" : "bin";
         }
-
         fileName = selectedFile.name || "arquivo";
-      } catch (err) {
-        console.error("❌ Erro ao ler o arquivo:", err);
-        throw err;
       }
-    }
 
-    const payload = {
-      nome: fileName,
-      arquivoAssinado: false,
-      tipoDocumentoVO: {
-        codigo: tipoDocumentoSelecionado.codigo,
-      },
-      indiceArquivoVOs: tipoDocumentoSelecionado.listaIndice.map((indice) => ({
-        codigo: indice.codigo,
-        nomeIndice: indice.nome,
-        tipoIndice: indice.tipoIndice,
-        descricao: indice.descricao || indice.nome,
-        valor: valoresIndices[indice.codigo],
-      })),
-      file_base64: fileBase64,
-    };
+      appendStep("Montando payload...");
+      const payload = {
+        nome: fileName,
+        arquivoAssinado: false,
+        tipoDocumentoVO: { codigo: tipoDocumentoSelecionado.codigo },
+        indiceArquivoVOs: tipoDocumentoSelecionado.listaIndice.map((indice) => ({
+          codigo: indice.codigo,
+          nomeIndice: indice.nome,
+          tipoIndice: indice.tipoIndice,
+          descricao: indice.descricao || indice.nome,
+          valor: valoresIndices[indice.codigo],
+        })),
+        file_base64: fileBase64,
+      };
 
-    console.log("🧾 Enviando para /upload com headers:", api.defaults.headers.common);
-    console.log("📤 Payload JSON:", JSON.stringify(payload, null, 2));
+      appendStep("Enviando para o servidor...");
+      await api.post("/arquivo/upload", payload, { maxContentLength: Infinity, maxBodyLength: Infinity });
 
-
-    const response = await api.post("/arquivo/upload", payload, {
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
-    });
-    console.log("✅ Resposta da API:", response.data);
-    toast.show({
-      placement: "top",
-      render: ({ id }) => (
-        <ToastMessage
-          id={id}
-          title="Documento enviado com sucesso!"
-          onClose={() => toast.close(id)}
-        />
-      ),
-    });
-
-    // Reset
-    setSelectedFile(null);
-    setScannedImages([]);
-    setValoresIndices({});
-    setThereIsFile(false);
-  } catch (error) {
-    if (error instanceof AppError) {
-      console.log("❌ Erro ao enviar:", {
-        responseData: error.response?.data,
-        status: error.status,
-        headers: error.headers,
-        message: error.message,
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage id={id} title="Documento enviado com sucesso!" onClose={() => toast.close(id)} />
+        ),
       });
-    } else {
-      console.log("❌ Erro inesperado:", error);
+
+      setSelectedFile(null);
+      setScannedImages([]);
+      setValoresIndices({});
+      setThereIsFile(false);
+    } catch (error) {
+      const title = error instanceof AppError ? error.message : "Erro ao enviar o documento";
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage action="error" id={id} title={title} onClose={() => toast.close(id)} />
+        ),
+      });
+    } finally {
+      setUploading(false);
+      setUploadSteps([]);
     }
-
-    const title = error instanceof AppError
-      ? error.message
-      : "Erro ao enviar o documento";
-
-    toast.show({
-      placement: "top",
-      render: ({ id }) => (
-        <ToastMessage
-          action="error"
-          id={id}
-          title={title}
-          onClose={() => toast.close(id)}
-        />
-      ),
-    });
-  }
-};
+  };
 
   const todosIndicesPreenchidos = () => {
   if (!tipoDocumentoSelecionado?.listaIndice?.length) return false;
@@ -347,6 +297,7 @@ const enviarArquivo = async () => {
   }, [selectedDepartment]);
 
   return (
+    <>
     <SafeAreaView className="flex-1 bg-gray-200">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -540,5 +491,21 @@ const enviarArquivo = async () => {
         </VStack>
       </KeyboardAvoidingView>
     </SafeAreaView>
+
+      <Modal transparent visible={uploading} animationType="fade">
+        <Center className="flex-1 bg-black/50 px-6">
+          <Box className="w-full p-6 bg-white rounded-2xl items-center">
+            <ActivityIndicator size="large" color="#1e40af" />
+            <VStack className="mt-4 w-full gap-1 items-center">
+              {uploadSteps.map((step, i) => (
+                <Text key={i} className="text-gray-600 text-sm text-center">
+                  {step}
+                </Text>
+              ))}
+            </VStack>
+          </Box>
+        </Center>
+      </Modal>
+    </>
   );
 };
