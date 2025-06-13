@@ -30,6 +30,8 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import { Video } from 'expo-av';
+
 
 
 export const Upload = () => {
@@ -92,6 +94,7 @@ export const Upload = () => {
       allowsMultipleSelection: true,
     });
     if (!result.canceled) {
+      console.log("Arquivo da galeria selecionado:", result.assets);
       setSelectedFile(result.assets);
       setThereIsFile(true);
     }
@@ -401,6 +404,13 @@ const enviarArquivo = async () => {
                             url: selectedFile.uri,
                             name: selectedFile.name || "",
                           });
+                        } else if (selectedFile?.mimeType?.includes("mp4")) {
+                          <Video
+                            source={{ uri: selectedFile.uri }}
+                            style={{ width: 200, height: 200 }}
+                            useNativeControls
+                            shouldPlay={false}
+                          />
                         }
                       }}
                       activeOpacity={0.8}
