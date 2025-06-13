@@ -397,20 +397,26 @@ const enviarArquivo = async () => {
                         else if (selectedFile?.mimeType?.includes("image")) {
                           navigator.navigate("VisualizarDocumento", {
                             images: [selectedFile],
-                            name:"",
+                            name: "",
                           });
                         } else if (selectedFile?.mimeType?.includes("pdf")) {
                           navigator.navigate("VisualizarDocumento", {
                             url: selectedFile.uri,
                             name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
                           });
-                        } else if (selectedFile?.mimeType?.includes("mp4")) {
-                          <Video
-                            source={{ uri: selectedFile.uri }}
-                            style={{ width: 200, height: 200 }}
-                            useNativeControls
-                            shouldPlay={false}
-                          />
+                        } else if (selectedFile?.mimeType?.startsWith("video")) {
+                          navigator.navigate("VisualizarDocumento", {
+                            url: selectedFile.uri,
+                            name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
+                          });
+                        } else if (selectedFile?.mimeType?.startsWith("audio")) {
+                          navigator.navigate("VisualizarDocumento", {
+                            url: selectedFile.uri,
+                            name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
+                          });
                         }
                       }}
                       activeOpacity={0.8}

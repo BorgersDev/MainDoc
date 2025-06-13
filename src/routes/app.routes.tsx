@@ -17,8 +17,8 @@ export type AppRoutes = {
         codigoDepartamento: number;
         codigoTipoDocumento: number;
       };
-    "VisualizarDocumento": 
-  | { url: string; name: string }
+    "VisualizarDocumento":
+  | { url: string; name: string; mimeType?: string }
   | { images: { uri: string }[]; name: string };
 };
 
