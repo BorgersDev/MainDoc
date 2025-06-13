@@ -444,6 +444,18 @@ const enviarArquivo = async () => {
                             name: selectedFile.name || "",
                             mimeType: selectedFile.mimeType,
                           });
+                        } else if (selectedFile?.mimeType?.startsWith("video")) {
+                          navigator.navigate("VisualizarDocumento", {
+                            url: selectedFile.uri,
+                            name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
+                          });
+                        } else if (selectedFile?.mimeType?.startsWith("audio")) {
+                          navigator.navigate("VisualizarDocumento", {
+                            url: selectedFile.uri,
+                            name: selectedFile.name || "",
+                            mimeType: selectedFile.mimeType,
+                          });
                         }
                       }}
                       activeOpacity={0.8}

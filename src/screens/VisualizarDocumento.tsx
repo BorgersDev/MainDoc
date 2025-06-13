@@ -48,6 +48,57 @@ export const VisualizarDocumento = () => {
     };
   }, [audioSound]);
 
+  let extension: string | undefined;
+  if ("url" in route.params) {
+    const match = route.params.url.split("?")[0].split(".").pop();
+    extension = match?.toLowerCase();
+  }
+
+  const isPDF =
+    (mimeType?.includes("pdf") ?? false) || extension === "pdf";
+
+  const videoExtensions = ["mp4", "mov", "m4v", "avi", "webm", "ogg"];
+  const audioExtensions = ["mp3", "wav", "ogg", "m4a", "aac", "flac"];
+
+  const isVideo =
+    (mimeType?.startsWith("video") ?? false) ||
+    (extension ? videoExtensions.includes(extension) : false);
+  const isAudio =
+    (mimeType?.startsWith("audio") ?? false) ||
+    (extension ? audioExtensions.includes(extension) : false);
+
+  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isAudio && "url" in route.params) {
+      let mounted = true;
+      let currentSound: Audio.Sound;
+      Audio.Sound.createAsync({ uri: route.params.url }).then(({ sound }) => {
+        if (mounted) {
+          currentSound = sound;
+          setSound(sound);
+        }
+      });
+      return () => {
+        mounted = false;
+        currentSound?.unloadAsync();
+      };
+    }
+  }, [isAudio, route.params]);
+
+  const handlePlayPause = async () => {
+    if (!sound) return;
+    const status = await sound.getStatusAsync();
+    if (status.isPlaying) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+    } else {
+      await sound.playAsync();
+      setIsPlaying(true);
+    }
+  };
+
   return (
     <VStack className="flex-1 mt-[14%] bg-white">
       <HStack className="pl-2.5 gap-18 items-center justify-between h-[7%] w-[80%]">
@@ -90,6 +141,8 @@ export const VisualizarDocumento = () => {
           <Text className="text-lg mb-4">Áudio: {name}</Text>
           <TouchableOpacity onPress={togglePlayback} className="p-4 bg-blue-700 rounded-xl">
             <Text className="text-white">{isPlaying ? "Pausar" : "Tocar"}</Text>
+          <TouchableOpacity onPress={handlePlayPause}>
+            <Feather name={isPlaying ? "pause" : "play"} size={40} color="black" />
           </TouchableOpacity>
         </View>
       )}
