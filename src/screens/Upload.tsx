@@ -30,6 +30,7 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import { set } from "@gluestack-style/react";
 
 export const Upload = () => {
   const navigator = useNavigation<AppNavigationRoutesProps>();
@@ -45,6 +46,7 @@ export const Upload = () => {
 
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [thereIsFile, setThereIsFile] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const [valoresIndices, setValoresIndices] = useState<Record<number, string>>(
     {}
   );
@@ -54,6 +56,19 @@ export const Upload = () => {
   const [uploadSteps, setUploadSteps] = useState<string[]>([]);
   const appendStep = (text: string) =>
     setUploadSteps((prev) => [...prev, text]);
+
+  const hasScannedImages = scannedImages.length > 0;
+
+  const isMedia =
+    !hasScannedImages &&
+    (selectedFile?.mimeType?.startsWith("video") ||
+      selectedFile?.mimeType?.startsWith("audio"));
+
+  const isImageOrPdf =
+    !hasScannedImages &&
+    (Array.isArray(selectedFile) ||
+      selectedFile?.mimeType?.includes("image") ||
+      selectedFile?.mimeType?.includes("pdf"));
 
   const openFileOptions = () => {
     Alert.alert("Selecionar arquivo", "Escolha a origem do documento", [
@@ -87,12 +102,16 @@ export const Upload = () => {
   };
 
   const pickFromGallery = async () => {
+    setShowLoading(true);
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       allowsMultipleSelection: true,
     });
 
-    if (result.canceled) return;
+    if (result.canceled) {
+      setShowLoading(false);
+      return;
+    }
 
     const assets = result.assets;
     // 1) se **todos** são imagens → Array de imagens
@@ -110,16 +129,22 @@ export const Upload = () => {
     }
 
     setThereIsFile(true);
+    setShowLoading(false);
   };
 
   const pickFromFiles = async () => {
+    setShowLoading(true);
     const result = await DocumentPicker.getDocumentAsync({
       type: "*/*",
       copyToCacheDirectory: true,
     });
+    if (result.canceled) {
+      setShowLoading(false); 
+    }
     if (!result.canceled) {
       setSelectedFile(result.assets[0]);
       setThereIsFile(true);
+      setShowLoading(false);
     }
   };
 
@@ -504,77 +529,87 @@ export const Upload = () => {
                 </Box>
 
                 {thereIsFile && (
-  <Box className="w-[90%] min-h-[150px] bg-gray-200 rounded-2xl shadow-md mt-4 p-4">
-    <VStack className="w-full items-center">
-      <Text className="text-gray-800 text-md font-semibold mb-4">
-        Pré-visualização
-      </Text>
-      <TouchableOpacity
-        className="items-center"
-        activeOpacity={0.8}
-        onPress={() => {
-          if (scannedImages.length > 0) {
-            navigator.navigate("VisualizarDocumento", {
-              images: scannedImages,
-              name: "",
-            });
-          } else if (Array.isArray(selectedFile)) {
-            navigator.navigate("VisualizarDocumento", {
-              images: selectedFile,
-              name: "",
-            });
-          } else if (selectedFile?.mimeType?.includes("image")) {
-            navigator.navigate("VisualizarDocumento", {
-              images: [selectedFile],
-              name: "",
-            });
-          } else if (selectedFile?.mimeType?.includes("pdf")) {
-            navigator.navigate("VisualizarDocumento", {
-              url: selectedFile.uri,
-              name: selectedFile.name || "",
-            });
-          } else if (
-            selectedFile?.mimeType?.startsWith("video") ||
-            selectedFile?.mimeType?.startsWith("audio")
-          ) {
-            navigator.navigate("VisualizarDocumento", {
-              mediaUri: selectedFile.uri,
-              mimeType: selectedFile.mimeType!,
-              name: selectedFile.name || "",
-            });
-          }
-        }}
-      >
-        {/* Miniatura / ícone */}
-        {Array.isArray(selectedFile) ? (
-          <Image
-            source={{ uri: selectedFile[0].uri }}
-            style={{ width: 200, height: 200, resizeMode: "contain" }}
-          />
-        ) : selectedFile?.mimeType?.includes("image") ? (
-          <Image
-            source={{ uri: selectedFile.uri }}
-            style={{ width: 200, height: 200, resizeMode: "contain" }}
-          />
-        ) : selectedFile?.mimeType?.includes("pdf") ? (
-          <Text className="text-blue-600 underline"></Text>
-        ) : null}
+                  <Box className="w-[90%] min-h-[150px] bg-gray-200 rounded-2xl shadow-md mt-4 p-4">
+                    <VStack className="w-full items-center">
+                      <Text className="text-gray-800 text-md font-semibold mb-4">
+                        Pré-visualização
+                      </Text>
+                      <TouchableOpacity
+                        className="items-center"
+                        activeOpacity={0.8}
+                        onPress={() => {
+                          if (scannedImages.length > 0) {
+                            navigator.navigate("VisualizarDocumento", {
+                              images: scannedImages,
+                              name: "",
+                            });
+                          } else if (Array.isArray(selectedFile)) {
+                            navigator.navigate("VisualizarDocumento", {
+                              images: selectedFile,
+                              name: "",
+                            });
+                          } else if (
+                            selectedFile?.mimeType?.includes("image")
+                          ) {
+                            navigator.navigate("VisualizarDocumento", {
+                              images: [selectedFile],
+                              name: "",
+                            });
+                          } else if (selectedFile?.mimeType?.includes("pdf")) {
+                            navigator.navigate("VisualizarDocumento", {
+                              url: selectedFile.uri,
+                              name: selectedFile.name || "",
+                            });
+                          } else if (
+                            selectedFile?.mimeType?.startsWith("video") ||
+                            selectedFile?.mimeType?.startsWith("audio")
+                          ) {
+                            navigator.navigate("VisualizarDocumento", {
+                              mediaUri: selectedFile.uri,
+                              mimeType: selectedFile.mimeType!,
+                              name: selectedFile.name || "",
+                            });
+                          }
+                        }}
+                      >
+                        {/* Miniatura / ícone */}
+                        {Array.isArray(selectedFile) ? (
+                          <Image
+                            source={{ uri: selectedFile[0].uri }}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              resizeMode: "contain",
+                            }}
+                          />
+                        ) : selectedFile?.mimeType?.includes("image") ? (
+                          <Image
+                            source={{ uri: selectedFile.uri }}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              resizeMode: "contain",
+                            }}
+                          />
+                        ) : selectedFile?.mimeType?.includes("pdf") ? (
+                          <Text className="text-blue-600 underline"></Text>
+                        ) : null}
 
-        {/* Texto correto para mídia vs documento */}
-        {(selectedFile?.mimeType?.startsWith("video") ||
-          selectedFile?.mimeType?.startsWith("audio")) ? (
-          <Text className="text-blue-600 text-md font-semibold mt-2">
-            Visualizar mídia
-          </Text>
-        ) : (
-          <Text className="text-blue-600 text-md font-semibold mt-2">
-            Visualizar Tudo
-          </Text>
-        )}
-      </TouchableOpacity>
-    </VStack>
-  </Box>
-)}
+                        {/* Texto correto para mídia vs documento */}
+                        {selectedFile?.mimeType?.startsWith("video") ||
+                        selectedFile?.mimeType?.startsWith("audio") ? (
+                          <Text className="text-blue-600 text-md font-semibold mt-2">
+                            Visualizar mídia
+                          </Text>
+                        ) : (
+                          <Text className="text-blue-600 text-md font-semibold mt-2">
+                            Visualizar Tudo
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </VStack>
+                  </Box>
+                )}
                 {thereIsFile && (
                   <Box className="w-[90%] bg-gray-200 rounded-2xl shadow-md mt-4 p-4 mb-6">
                     {tipoDocumentoSelecionado?.listaIndice?.length > 0 && (
@@ -611,18 +646,33 @@ export const Upload = () => {
                       <Button
                         className="mt-3 mx-12 bg-blue-700 disabled:bg-gray-400"
                         onPress={
-                          selectedFile.mimeType?.startsWith("video") ||
-                          selectedFile.mimeType?.startsWith("audio")
+                          // 1) se vier da câmera → enviarArquivo
+                          hasScannedImages
+                            ? enviarArquivo
+                            : // 2) se for vídeo/áudio → enviarVideoAudio
+                            isMedia
                             ? enviarVideoAudio
-                            : enviarArquivo
+                            : // 3) se for imagem/PDF → enviarArquivo
+                            isImageOrPdf
+                            ? enviarArquivo
+                            : // 4) senão, não faz nada
+                              () => {}
                         }
                         title={
-                          selectedFile.mimeType?.startsWith("video") ||
-                          selectedFile.mimeType?.startsWith("audio")
+                          hasScannedImages || isImageOrPdf
+                            ? "Enviar documento"
+                            : isMedia
                             ? "Enviar mídia"
-                            : "Enviar documento"
+                            : "Enviar"
                         }
-                        disabled={!todosIndicesPreenchidos()}
+                        disabled={
+                          // só habilita se for imagem/PDF ou se tiver índices preenchidos
+                          hasScannedImages
+                            ? !todosIndicesPreenchidos()
+                            : isImageOrPdf
+                            ? !todosIndicesPreenchidos()
+                            : !isMedia
+                        }
                       />
                     )}
                   </Box>
@@ -648,6 +698,12 @@ export const Upload = () => {
           </Box>
         </Center>
       </Modal>
+
+      {showLoading && (
+        <Box className="absolute top-0 left-0 right-0 bottom-0 bg-black/50 justify-center items-center">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </Box>
+      )}
     </>
   );
 };

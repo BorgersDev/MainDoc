@@ -16,7 +16,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.borgesdev.MainDoc1",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "AVAudioSessionCategory": "AVAudioSessionCategoryPlayback",
+        "AVAudioSessionCategoryOptions": "AVAudioSessionCategoryOptionMixWithOthers",
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {

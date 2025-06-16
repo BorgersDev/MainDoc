@@ -23,7 +23,7 @@ export function AudioPlayer({ uri }: AudioPlayerProps) {
   };
 
   return (
-    <Box className="mt-4 px-4 bg-gray-200 p-5 rounded-lg">
+        <Box className="mt-4 px-4 bg-gray-200 p-5 rounded-lg">
       {/* controle de reprodução e barra de progresso */}
       <HStack className="flex-row items-center mb-2">
         <TouchableOpacity onPress={() => (player.playing ? player.pause() : player.play())}>

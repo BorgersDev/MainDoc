@@ -75,9 +75,16 @@ export const PopupMenu = ({items}: PopupMenuProps) => {
                 <SafeAreaView style={{flex: 1}} onTouchStart={()=> resizeBox(0)}>
                     <Animated.View style={[styles.popup, {opacity: scale.interpolate({inputRange:[0,1], outputRange: [0,1]})} ,{transform: [{scale}, {translateX}, {translateY}]}]}>
                         {items.map((item, index) => (
-                            <TouchableOpacity style={[styles.option, { borderBottomWidth: index === items.length - 1 ? 0 : 1}]} key={index} onPress={item.action}>
-                                <Feather name={item.icon} size={17} color="black" />
-                                <Text className="font-heading text-gray-700">{item.title}</Text>
+                            <TouchableOpacity 
+                                key={index}
+                                 style={[styles.option, { borderBottomWidth: index === items.length - 1 ? 0 : 1}]} 
+                                 onPress={() =>{
+                                    resizeBox(0);
+                                    setTimeout(item.action, 150);
+                                 }}>
+
+                                    <Feather name={item.icon} size={17} color="black" />
+                                    <Text className="font-heading text-gray-700">{item.title}</Text>
                             </TouchableOpacity>
                         ))}
                     </Animated.View>
