@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SafeAreaView } from "@/components/ui/safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { HStack } from "@/components/ui/hstack";
@@ -460,7 +460,7 @@ export const Upload = () => {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-gray-200">
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "#E5E7EB" }} >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}

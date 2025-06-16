@@ -1,4 +1,4 @@
-import { SafeAreaView } from "@/components/ui/safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { HStack } from "@/components/ui/hstack";
@@ -23,8 +23,7 @@ export const TrocarEmpresa = () => {
         setEmpresaConfirmada(true)
     }
     return (
-        <SafeAreaView className="flex-1 bg-gray-200">
-            <Text>{user.empresaVOs[0].codigo}</Text>
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "#E5E7EB" }} >
             <VStack className="flex-1">
                 <HStack className="pr-6 justify-end">
                     <TouchableOpacity onPress={() => navigator.goBack()}>

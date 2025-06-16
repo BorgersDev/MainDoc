@@ -20,6 +20,7 @@ import { LoadingContextProvider } from '@contexts/LoadingContext';
 
 import { useLoading } from '@hooks/useLoading';
 
+
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
 
