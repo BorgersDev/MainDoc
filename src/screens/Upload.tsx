@@ -92,6 +92,7 @@ export const Upload = () => {
 
     const result = await ImagePicker.launchCameraAsync({
       quality: 1,
+      allowsEditing:true
     });
 
     if (!result.canceled) {

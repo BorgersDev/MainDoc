@@ -19,14 +19,17 @@
         "ITSAppUsesNonExemptEncryption": false,
         "AVAudioSessionCategory": "AVAudioSessionCategoryPlayback",
         "AVAudioSessionCategoryOptions": "AVAudioSessionCategoryOptionMixWithOthers",
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.borgesdev.maindoc"
     },
     "web": {
       "favicon": "./assets/favicon.png"
